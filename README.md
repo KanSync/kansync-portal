@@ -1,2 +1,2 @@
-# kansync-portal
+# KanSync-portal
 Portal for the KanSync project
