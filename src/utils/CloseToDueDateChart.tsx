@@ -14,10 +14,6 @@ export const options: ChartOptions = {
   },
 };
 
-/*
-takes a list of unified issues and number of days to consider for the deadline.
-retrun a number of issues with a deadline within the specified days.
-*/
 export function showIssuesWithinDaysThreshold(
   issues: IUnifiedIssue[],
   daysThreshold: number,
@@ -33,10 +29,6 @@ export function showIssuesWithinDaysThreshold(
     }
     return false;
   });
-
-  console.log(
-    `Number of issues with a deadline within ${daysThreshold} days: ${filteredIssues.length}`,
-  );
 
   return filteredIssues.length;
 }

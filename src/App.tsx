@@ -24,12 +24,6 @@ function App() {
           onChange={handleDaysThresholdChange}
         />
       </div>
-
-      <Burndown
-        issues={parsed_data.issues}
-        numIssues={parsed_data.num}
-        endDate={new Date()}
-      />
       
       <CloseToDueDateChart issues={parsed_data.issues} daysThreshold={daysThreshold} />
     </>
