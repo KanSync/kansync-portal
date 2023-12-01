@@ -6,3 +6,7 @@ export interface BurndownProps {
   endDate: Date;
   // startDate: Date;
 }
+
+export interface AverageAgeProps {
+  issues: IUnifiedIssue[];
+}
