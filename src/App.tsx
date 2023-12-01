@@ -1,40 +1,37 @@
 import Burndown from "./charts/burndown";
+import React, { useState } from 'react';
 import "./App.css";
 import conv_to_unified from "./utils/parse";
 import { tmp } from "./charts/tmp";
-import {
-  showIssuesWithinDaysThreshold,
-  showClosestDeadlines,
-} from "./utils/dueDataFuntions";
+import CloseToDueDateChart from "./utils/CloseToDueDateChart";
 
 function App() {
+  const [daysThreshold, setDaysThreshold] = useState(7);
   let parsed_data = conv_to_unified(tmp);
 
-  const issuesWithinDaysCount = showIssuesWithinDaysThreshold(
-    parsed_data.issues,
-    7,
-  );
-
-  const closestDeadlinesIssues = showClosestDeadlines(parsed_data.issues, 3);
+  const handleDaysThresholdChange = (event) => {
+    setDaysThreshold(Number(event.target.value));
+  };
 
   return (
     <>
+      <div>
+        <label htmlFor="daysThreshold">Days for 'Close to Due Date': </label>
+        <input
+          id="daysThreshold"
+          type="number"
+          value={daysThreshold}
+          onChange={handleDaysThresholdChange}
+        />
+      </div>
+
       <Burndown
         issues={parsed_data.issues}
         numIssues={parsed_data.num}
         endDate={new Date()}
       />
-      <p>{`Number of issues within 7 days: ${issuesWithinDaysCount}`}</p>
-      <div>
-        <p>Issues closest to their deadline:</p>
-        <ul>
-          {closestDeadlinesIssues.map((issue, index) => (
-            <li
-              key={index}
-            >{`Issue: ${issue.title}, Due Date: ${issue.dueDate}`}</li>
-          ))}
-        </ul>
-      </div>
+      
+      <CloseToDueDateChart issues={parsed_data.issues} daysThreshold={daysThreshold} />
     </>
   );
 }
