@@ -11,7 +11,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { IUnifiedIssue } from "../interfaces/issues";
-import { AverageAgeProps } from "../interfaces/chart_props";
+import { ChartProps } from "../interfaces/chart_props";
 import { CATEGORY_DONE, time_diff, sum } from "./common";
 
 ChartJS.register(LinearScale, CategoryScale, BarElement, Legend, Tooltip);
@@ -66,7 +66,7 @@ function create_average_age_data(issues: IUnifiedIssue[]): ChartData {
   return data;
 }
 
-const AverageAge = (props: AverageAgeProps) => {
+const AverageAge = (props: ChartProps) => {
   const chartRef = useRef<ChartJS>(null);
 
   return (
