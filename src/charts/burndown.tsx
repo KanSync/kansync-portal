@@ -13,7 +13,8 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { IUnifiedIssue } from "../interfaces/issues";
-import { BurndownProps } from "../interfaces/burndown";
+import { BurndownProps } from "../interfaces/chart_props";
+import { time_diff, CATEGORY_DONE, DAY_IN_MS } from "./common";
 
 ChartJS.register(
   LinearScale,
@@ -45,7 +46,7 @@ function create_ideal(num_issues: number, period: number): ChartDataset {
   let result = [];
 
   let tasks_per_day = num_issues / (period - 1);
-  for (let index = 0; index <= period; index++) {
+  for (let index = 0; index < period; index++) {
     result.push(num_issues - tasks_per_day * index);
   }
 
@@ -85,13 +86,9 @@ function create_actual(
   let acc_done = 0;
 
   // For all dates in the range start to stop
-  for (
-    let date = start;
-    date < stop;
-    new Date(date.setDate(date.getDate() + 1))
-  ) {
+  for (let date = start.getTime(); date < stop.getTime(); date += DAY_IN_MS) {
     // @ts-ignore
-    acc_done += count_done[date] || 0;
+    acc_done += count_done[new Date(date)] || 0;
     result.push(num_issues - acc_done);
   }
 
@@ -130,7 +127,7 @@ function create_burndown_data(
     creation_dates.push(created_date);
 
     // Might not work with all agile tools
-    if (issue.category == "Done") {
+    if (issue.category == CATEGORY_DONE) {
       let done_date = issue.statusChangeTime;
       done_date.setHours(0, 0, 0, 0);
       done_dates.push(done_date);
@@ -143,7 +140,7 @@ function create_burndown_data(
   let start = creation_dates[0];
   let stop = end_date;
 
-  let period = (stop.getTime() - start.getTime()) / (1000 * 60 * 60 * 24); // Divide the time difference with the number of milliseconds in a day
+  let period = time_diff(start, stop);
 
   let labels = [...Array(period).keys()];
 
