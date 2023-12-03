@@ -1,4 +1,4 @@
-import {useCallback, useState, useEffect} from "react";
+import {useCallback, useState} from "react";
 import PlusCircle from "./assets/plus-circle.svg";
 import { useProject } from "./providers/ProjectProvider";
 import DisplayCard from "./DisplayCard";
@@ -13,19 +13,17 @@ const AddCard = ({ title }: { title: string }) => {
   // Function to receive data from the child component
   const handleChildValueChange = (value: string) => {   
     setReceivedValue(value);
+   
   };
 
   const addProject = useProject().addProject;
- 
- 
   
   const handleClick = useCallback(() => {
-    
     addProject({
       name: receivedValue,//"test",
       platform: title,
     });
-  }, [addProject]);
+  }, [addProject, receivedValue]);
 
   return (
     <div className="bg-secondary flex flex-row justify-between px-8 center items-center ml-8 py-4">

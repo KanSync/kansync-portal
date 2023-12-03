@@ -5,9 +5,8 @@ interface DefaultInputProps {
     onChildValueChange: (value: string) => void; // Function prop to send data to the parent
   }
   
-  
 
-  const DefaultInput = ({ placeholder, onChildValueChange }: DefaultInputProps) => {
+const DefaultInput = ({ placeholder, onChildValueChange }: DefaultInputProps) => {
     const [inputValue, setInputValue] = useState<string>("");
   
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
