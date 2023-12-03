@@ -1,36 +1,13 @@
-import { useCallback, useState, ChangeEvent } from "react";
+import {useCallback, useState, useEffect} from "react";
 import PlusCircle from "./assets/plus-circle.svg";
 import { useProject } from "./providers/ProjectProvider";
+import DisplayCard from "./DisplayCard";
+import { DefaultInput} from "./DefaultInput";
 
 
 
-interface DefaultInputProps {
-  placeholder?: string;
-  onChildValueChange: (value: string) => void; // Function prop to send data to the parent
-}
 
-const DefaultInput = ({ placeholder, onChildValueChange }: DefaultInputProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    onChildValueChange(e.target.value);
-  };
-
-  return (
-    <>
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={inputValue}
-        onChange={handleInputChange}
-        className="w-full bg-transparent rounded-md border border-stroke dark:border-dark-3 py-[10px] px-5 text-dark-6 outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2"
-      />
-    </>
-  );
-};
-
-const AddCard: React.FC = () => {
+const AddCard = ({ title }: { title: string }) => {
   const [receivedValue, setReceivedValue] = useState<string>("");
 
   // Function to receive data from the child component
@@ -38,12 +15,15 @@ const AddCard: React.FC = () => {
     setReceivedValue(value);
   };
 
-
   const addProject = useProject().addProject;
-
+ 
+ 
+  
   const handleClick = useCallback(() => {
+    
     addProject({
-      name: receivedValue//"test",
+      name: receivedValue,//"test",
+      platform: title,
     });
   }, [addProject]);
 
@@ -60,12 +40,13 @@ const AddCard: React.FC = () => {
 };
 
 const Card = ({ title }: { title: string }) => {
+  const activeProjects = useProject().activeProjects;
   const [isAddNewProjectCardVisible, setIsAddNewProjectCardVisible] =
     useState(false); // TODO: set this to false
   const handleClick = useCallback(() => {
     setIsAddNewProjectCardVisible(true);
   }, []);
-
+ 
   return (
     <div className="flex gap-8 flex-col">
       <div className="bg-secondary flex flex-row justify-between px-8 center items-center">
@@ -77,7 +58,10 @@ const Card = ({ title }: { title: string }) => {
           </a>
         </div>
       </div>
-      {isAddNewProjectCardVisible && <AddCard />}
+      {isAddNewProjectCardVisible && <AddCard title={title}/>}
+      {activeProjects.map((project) => ( 
+      title == project.platform && <DisplayCard projectName={project.name}/>
+      ))}
     </div>
   );
 };
