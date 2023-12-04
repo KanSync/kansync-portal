@@ -17,6 +17,9 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+html, body, #app, #app>div {
+  height: 100%
+}
 
 #root {
   margin-left: 8em;
