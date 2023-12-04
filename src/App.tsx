@@ -1,9 +1,7 @@
-import Overview from "./charts/overview";
-import Burndown from "./charts/burndown";
-import React, { useState } from 'react';
-import AverageAge from "./charts/average_age";
 import "./App.css";
 import conv_to_unified from "./utils/parse";
+import { tmp } from "./charts/tmp";
+import React, { useState } from 'react';
 import { tmp } from "./charts/tmp";
 import CloseToDueDateChart from "./utils/CloseToDueDateChart";
 

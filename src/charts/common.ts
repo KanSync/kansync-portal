@@ -17,3 +17,10 @@ export function time_diff(old: Date, recent: Date) {
 export function sum(numList: number[]) {
   return numList.reduce((partialSum, a) => partialSum + a, 0);
 }
+
+export function count(list: any[]) {
+  return list.reduce(
+    (acc, element) => ((acc[element] = acc[element] + 1 || 1), acc),
+    {}
+  );
+}

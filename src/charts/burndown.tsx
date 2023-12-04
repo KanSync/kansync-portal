@@ -14,7 +14,7 @@ import {
 import { Chart } from "react-chartjs-2";
 import { IUnifiedIssue } from "../interfaces/issues";
 import { BurndownProps } from "../interfaces/chart_props";
-import { time_diff, CATEGORY_DONE, DAY_IN_MS } from "./common";
+import { time_diff, CATEGORY_DONE, DAY_IN_MS, count } from "./common";
 
 ChartJS.register(
   LinearScale,
@@ -76,11 +76,7 @@ function create_actual(
   stop: Date,
   doneDates: Date[]
 ): ChartDataset {
-  let count_done = doneDates.reduce(
-    // @ts-ignore
-    (acc, date) => ((acc[date] = acc[date] + 1 || 1), acc),
-    {}
-  );
+  let count_done = count(doneDates);
 
   let result = [];
   let acc_done = 0;
