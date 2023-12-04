@@ -3,20 +3,6 @@ import Bolt from "../assets/bolt.svg";
 import Footer from "../footer";
 import Header from "../header";
 
-const WalkthroughTextBoxes = ({ title }: { title: string }) => {
-  return (
-    <div className="flex flex-row">
-      <b className="bg-gradient-to-r from-accent to-primary text-transparent bg-clip-text text-2xl">
-        {title}
-      </b>
-      <p className="text-sm pb-4 pl-4 pr-4">
-        Lorem ipsum dolor sit amet consectetur. Id nullam ac congue sed massa
-        id.
-      </p>
-    </div>
-  );
-};
-
 const PositiveTextBoxes = ({ title }: { title: string }) => {
   return (
     <div className="flex flex-col items-center gap-4">
@@ -33,7 +19,7 @@ const PositiveTextBoxes = ({ title }: { title: string }) => {
   );
 };
 
-const LandingPage = () => {
+const AboutPage = () => {
   const [count, setCount] = useState(0);
   const [result, setResult] = useState<{
     success: boolean;
@@ -73,7 +59,7 @@ const LandingPage = () => {
             fontWeight: 700,
           }}
         >
-          Visualize Your Kanban Board In{" "}
+          About{" "}
           <span
             style={{
               background:
@@ -82,19 +68,9 @@ const LandingPage = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            Detail
+            Us
           </span>
         </div>
-
-        <button
-          style={{
-            background: "black",
-            color: "white",
-            width: 280,
-          }}
-        >
-          Import
-        </button>
       </div>
       <div className="flex flex-col place-items-center pt-16 gap-10">
         <b className="text-xl">Why KanSync?</b>
@@ -104,26 +80,10 @@ const LandingPage = () => {
           <PositiveTextBoxes title="It's simple" />
         </div>
       </div>
-      <div className="bg-secondary flex flex-row rounded-3xl p-10 mt-16">
-        <div className="flex flex-col gap-10 flex-1">
-          <b>How does it work</b>
-          <b>Get your personlized dashboard in 4 steps.</b>
-        </div>
-        <div className="flex flex-col flex-1 gap-4">
-          <div className="flex justify-around">
-            <WalkthroughTextBoxes title="1" />
-            <WalkthroughTextBoxes title="2" />
-          </div>
-          <div className="flex justify-around">
-            <WalkthroughTextBoxes title="3" />
-            <WalkthroughTextBoxes title="4" />
-          </div>
-        </div>
-      </div>
 
       <Footer />
     </>
   );
 };
 
-export default LandingPage;
+export default AboutPage;

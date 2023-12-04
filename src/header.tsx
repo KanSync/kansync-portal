@@ -23,7 +23,7 @@ const Header = () => {
           gap: "2em",
         }}
       >
-        <a>About</a>
+        <Link to={`/about`}>About</Link>
         <Link to={`/dashboard`}>Dashboard</Link>
         <button>Login</button>
       </div>

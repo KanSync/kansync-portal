@@ -7,6 +7,7 @@ import ErrorPage from "./routes/error-page.tsx";
 import "./index.css";
 import { ProjectProvider } from "./providers/ProjectProvider.tsx";
 import KanbanPage from "./routes/kanban-page.tsx";
+import AboutPage from "./routes/about-page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/kanban",
     element: <KanbanPage />,
+  },
+  {
+    path: "/about",
+    element: <AboutPage />,
   },
 ]);
 

@@ -1,8 +1,7 @@
-import Header from "../header";
-import Footer from "../footer";
-import Card from "../card";
-import { useProject } from "../providers/ProjectProvider";
 import { Link } from "react-router-dom";
+import Card from "../card";
+import Header from "../header";
+import { useProject } from "../providers/ProjectProvider";
 
 const Dashboard = () => {
   const activeProjects = useProject().activeProjects;
@@ -22,7 +21,6 @@ const Dashboard = () => {
           </Link>
         )}
       </div>
-      <Footer />
     </>
   );
 };
