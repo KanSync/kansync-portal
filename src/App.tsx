@@ -1,3 +1,4 @@
+import Overview from "./charts/overview";
 import Burndown from "./charts/burndown";
 import React, { useState } from 'react';
 import AverageAge from "./charts/average_age";
@@ -29,8 +30,6 @@ function App() {
       <CloseToDueDateChart issues={parsed_data.issues} daysThreshold={daysThreshold} />
     </>
   );
- 
-  // return <AverageAge issues={parsed_data.issues} />;
 }
 
 export default App;
