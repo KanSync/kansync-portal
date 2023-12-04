@@ -40,8 +40,8 @@ function create_average_age_data(issues: IUnifiedIssue[]): ChartData {
   today.setHours(0, 0, 0, 0);
 
   for (const [key, value] of Object.entries(grouped_by_category)) {
-    // @ts-ignore
-    let ages = value.map((c_date: IUnifiedIssue) =>
+    let issues = value as IUnifiedIssue[]
+    let ages = issues.map((c_date: IUnifiedIssue) =>
       time_diff(c_date.createdAt, today)
     );
     grouped_by_category[key] = sum(ages) / ages.length;
