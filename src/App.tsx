@@ -1,5 +1,6 @@
 import Burndown from "./charts/burndown";
 import React, { useState } from 'react';
+import AverageAge from "./charts/average_age";
 import "./App.css";
 import conv_to_unified from "./utils/parse";
 import { tmp } from "./charts/tmp";
@@ -28,6 +29,8 @@ function App() {
       <CloseToDueDateChart issues={parsed_data.issues} daysThreshold={daysThreshold} />
     </>
   );
+ 
+  // return <AverageAge issues={parsed_data.issues} />;
 }
 
 export default App;
