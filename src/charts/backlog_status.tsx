@@ -30,9 +30,10 @@ export const options: ChartOptions = {
 };
 
 /**
- * Process the issue data to create data for .
+ * Process the issue data to create data for created vs resolved.
  *
- * @param issues A list of issues.
+ * @param issues A list of issues
+ * @param start Start date for the graph
  * @returns Average age chart data
  */
 function create_backlog_status_data(

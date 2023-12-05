@@ -8,6 +8,9 @@ import "./index.css";
 import { ProjectProvider } from "./providers/ProjectProvider.tsx";
 import KanbanPage from "./routes/kanban-page.tsx";
 import AboutPage from "./routes/about-page.tsx";
+import Resolution from "./charts/resolution_time.tsx";
+import { tmp } from "./charts/tmp.ts";
+import conv_to_unified from "./utils/parse.ts";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/about",
     element: <AboutPage />,
+  },
+  {
+    // REMOVE THIS ENDPOINT WHEN GRAPHS ARE ACTUALLY USED
+    path: "/test",
+    element: <Resolution issues={conv_to_unified(tmp).issues} startDate={ new Date(2023,10,14) } endDate={ new Date() }/>,
   },
 ]);
 
