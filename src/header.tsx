@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { oauth_jira } from "./utils/oauth";
 
 const Header = () => {
   return (
@@ -25,7 +26,7 @@ const Header = () => {
       >
         <Link to={`/about`}>About</Link>
         <Link to={`/dashboard`}>Dashboard</Link>
-        <button>Login</button>
+        <button onClick={oauth_jira}>Login</button>
       </div>
     </div>
   );
