@@ -72,7 +72,7 @@ const AboutPage = () => {
           </span>
         </div>
       </div>
-      <div className="flex flex-col place-items-center pt-16 gap-10">
+      <div className="flex flex-col place-items-center pt-16 gap-10 mx-16">
         <b className="text-xl">Why KanSync?</b>
         <div className="flex flex-row">
           <PositiveTextBoxes title="Saves time" />

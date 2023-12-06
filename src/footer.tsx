@@ -1,11 +1,11 @@
-import PuzzlePiece from "./assets/puzzle-piece.svg";
-
 const Footer = () => {
   return (
-    <div className="bg-secondary flex flex-col h-96 place-items-center place-content-center my-32 ">
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
-      <img src={PuzzlePiece} className="w-8" />
-      Maria Lopez, VP of Design at Meshery
+    <div className="bg-secondary flex flex-col h-48 place-items-center place-content-center mt-32 ">
+      Software Engineering Project
+      <small>Made by</small>
+      <p className="bg-gradient-to-r from-accent to-primary text-transparent bg-clip-text">
+        Students at UU
+      </p>
     </div>
   );
 };
