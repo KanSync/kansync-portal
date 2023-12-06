@@ -44,6 +44,11 @@ const router = createBrowserRouter([
     path: "/about",
     element: <AboutPage />,
   },
+  {
+    // REMOVE THIS ENDPOINT WHEN GRAPHS ARE ACTUALLY USED
+    path: "/test",
+    element: <Resolution issues={conv_to_unified(tmp).issues} startDate={ new Date(2023,10,14) } endDate={ new Date() }/>,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

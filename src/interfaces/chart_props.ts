@@ -6,8 +6,13 @@ export interface ChartProps {
 
 export interface BurndownProps extends ChartProps {
   numIssues: number;
+  startDate: Date;
   endDate: Date;
-  // startDate: Date;
+}
+
+export interface ResolutionProps extends ChartProps {
+  startDate: Date;
+  endDate: Date;
 }
 
 export interface BacklogStatusProps extends ChartProps {

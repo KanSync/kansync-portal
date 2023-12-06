@@ -37,8 +37,8 @@ export const options: ChartOptions = {
 /**
  * Create data necessary for creating ideal burndown.
  *
- * @param num_issues The number of issues.
- * @param period The length of the project (start to stop).
+ * @param num_issues The number of issues
+ * @param period The length of the project (start to stop)
  *
  * @returns Ideal burndown data.
  */
@@ -63,10 +63,10 @@ function create_ideal(num_issues: number, period: number): ChartDataset {
 /**
  * Create data necessary for creating actual burndown.
  *
- * @param num_issues Number of issues.
- * @param start The starting date for the project.
- * @param stop The planned stop date for the project.
- * @param doneDates A list of finish dates.
+ * @param num_issues Number of issues
+ * @param start The starting date for the project
+ * @param stop The planned stop date for the project
+ * @param doneDates A list of finish dates
  *
  * @returns Data required to create a burndown chart
  */
@@ -101,40 +101,33 @@ function create_actual(
 /**
  * Process the issue data to create data for ideal and actual burndown.
  *
- * @param num_issues Number of issues.
- * @param end_date Planned finish date.
- * @param issues A list of issues.
+ * @param num_issues Number of issues
+ * @param start Chosen start date
+ * @param stop Planned finish date
+ * @param issues A list of issues
  *
  * @returns Ideal and actual burndown chart data
  */
 function create_burndown_data(
   num_issues: number,
-  end_date: Date,
+  start: Date,
+  stop: Date,
   issues: IUnifiedIssue[]
 ): ChartData {
-  end_date.setHours(0, 0, 0, 0); // We do not care about hh:mm:ss
+  stop.setHours(0, 0, 0, 0); // We do not care about hh:mm:ss
 
-  let creation_dates: Date[] = [];
   let done_dates: Date[] = [];
 
   issues.forEach((issue) => {
-    let created_date = issue.createdAt;
-    created_date.setHours(0, 0, 0, 0);
-    creation_dates.push(created_date);
-
     // Might not work with all agile tools
-    if (issue.category == CATEGORY_DONE) {
+    if (issue.category === CATEGORY_DONE) {
       let done_date = issue.statusChangeTime;
       done_date.setHours(0, 0, 0, 0);
       done_dates.push(done_date);
     }
   });
 
-  creation_dates.sort();
   done_dates.sort().reverse();
-
-  let start = creation_dates[0];
-  let stop = end_date;
 
   let period = time_diff(start, stop);
 
@@ -159,7 +152,7 @@ const Burndown = (props: BurndownProps) => {
       ref={chartRef}
       type="bar"
       options={options}
-      data={create_burndown_data(props.numIssues, props.endDate, props.issues)}
+      data={create_burndown_data(props.numIssues, props.startDate, props.endDate, props.issues)}
       width={"100%"}
     />
   );
