@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import Header from "../header";
 import { useProject } from "../providers/ProjectProvider";
 
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import PlusCircle from "../assets/plus-circle.svg";
+import JuicyButton from "../juicybutton";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -67,9 +68,22 @@ const BoardImporter = () => {
                         placeholder="Enter name of repository"
                         onChildValueChange={handleChildValueChange}
                       />
-                      <button className="hover:bg-accent" onClick={handleClick}>
-                        <img src={PlusCircle} className="w-16" alt="" />
-                      </button>
+                      <JuicyButton onClick={handleClick}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                          />
+                        </svg>
+                      </JuicyButton>
                     </div>
                   </li>
 
@@ -106,16 +120,14 @@ const Dashboard = () => {
     <>
       <Header />
       <div className="flex flex-col flex-1 gap-8 place-items-center py-16">
-        <BoardImporter />
         {(activeProjects.Github.length > 0 ||
           activeProjects.Jira.length > 0 ||
           activeProjects.Trello.length > 0) && (
-          <Link to="/kanban" className="flex place-content-center">
-            <button className="bg-text text-background px-16 py-4 rounded-md">
-              Continue with selected boards
-            </button>
+          <Link to="/kanban/overview" className="flex place-content-center">
+            <JuicyButton>Continue with selected boards</JuicyButton>
           </Link>
         )}
+        <BoardImporter />
       </div>
     </>
   );

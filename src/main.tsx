@@ -8,6 +8,9 @@ import "./index.css";
 import { ProjectProvider } from "./providers/ProjectProvider.tsx";
 import KanbanPage from "./routes/kanban-page.tsx";
 import AboutPage from "./routes/about-page.tsx";
+import Overview from "./routes/overview.tsx";
+import Board from "./routes/board.tsx";
+import Graphs from "./routes/graphs.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +25,20 @@ const router = createBrowserRouter([
   {
     path: "/kanban",
     element: <KanbanPage />,
+    children: [
+      {
+        path: "overview",
+        element: <Overview />,
+      },
+      {
+        path: "board",
+        element: <Board />,
+      },
+      {
+        path: "graphs",
+        element: <Graphs />,
+      },
+    ],
   },
   {
     path: "/about",
