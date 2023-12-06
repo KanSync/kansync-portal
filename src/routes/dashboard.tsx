@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import Header from "../header";
 import { useProject } from "../providers/ProjectProvider";
 
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
-import PlusCircle from "../assets/plus-circle.svg";
 import JuicyButton from "../juicybutton";
 
 function classNames(...classes: string[]) {
@@ -68,7 +67,7 @@ const BoardImporter = () => {
                         placeholder="Enter name of repository"
                         onChildValueChange={handleChildValueChange}
                       />
-                      <JuicyButton onClick={handleClick}>
+                      <JuicyButton onClick={handleClick} className="bg-text">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -124,7 +123,9 @@ const Dashboard = () => {
           activeProjects.Jira.length > 0 ||
           activeProjects.Trello.length > 0) && (
           <Link to="/kanban/overview" className="flex place-content-center">
-            <JuicyButton>Continue with selected boards</JuicyButton>
+            <JuicyButton className="bg-text px-8">
+              Continue with selected boards
+            </JuicyButton>
           </Link>
         )}
         <BoardImporter />
