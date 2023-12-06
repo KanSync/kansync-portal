@@ -13,9 +13,14 @@ function classNames(...classes: string[]) {
 }
 
 const BoardImporter = () => {
-  const [receivedValue, setReceivedValue] = useState<string>("");
-  const handleChildValueChange = (value: string) => {
-    setReceivedValue(value);
+  const [receivedValue1, setReceivedValue1] = useState<string>("");
+  const handleChildValueChange1 = (value: string) => {
+    setReceivedValue1(value);
+  };
+
+  const [receivedValue2, setReceivedValue2] = useState<string>("");
+  const handleChildValueChange2 = (value: string) => {
+    setReceivedValue2(value);
   };
 
   const [currentPlatform, setCurrentPlatform] = useState<string>("");
@@ -25,12 +30,26 @@ const BoardImporter = () => {
 
   const { addProject, activeProjects } = useProject();
 
+/*
+  const canClick = useCallback(() => {
+    activeProjects.Github.map((project) => {
+      if(receivedValue1 === project.name){return false}})
+    activeProjects.Jira.map((project) => {
+      if(receivedValue1 === project.name){return false}})
+    activeProjects.Trello.map((project) => {
+      if(receivedValue1 === project.name){return} false})
+   // return true;
+  }, [receivedValue1]);
+*/
   const handleClick = useCallback(() => {
+    //if(receivedValue1 == "" || receivedValue2 == "" || currentPlatform == "") { return}
+  
     addProject({
-      name: receivedValue,
+      name: receivedValue1,
+      owner: receivedValue2,
       platform: currentPlatform, 
     });
-  }, [addProject, receivedValue]);
+  }, [addProject, receivedValue1, receivedValue2]);
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -72,13 +91,19 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">
+                    <div className="flex flex-row items-center gap-8">                     
                       <DefaultInput
-                        placeholder="Enter name of repository"
-                        onChildValueChange={handleChildValueChange}
+                        placeholder={currentPlatform}
+                        id = "1"
+                        onChildValueChange={handleChildValueChange1}
+                      />
+                      <DefaultInput
+                        placeholder={currentPlatform}
+                        id = "2"
+                        onChildValueChange={handleChildValueChange2}
                       />
                       <JuicyButton onClick={handleClick}>
-                        <svg
+                        <svg //JuicyButton onClick={canClick() ? handleClick : undefined}
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
