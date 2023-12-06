@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Bolt from "../assets/bolt.svg";
 import Footer from "../footer";
 import Header from "../header";
+import { Link } from "react-router-dom";
 
 const WalkthroughTextBoxes = ({ title }: { title: string }) => {
   return (
@@ -80,9 +81,11 @@ const LandingPage = () => {
             </span>
           </div>
 
-          <button className="px-16 py-4 bg-text w-1/3 text-background rounded-lg">
-            Import
-          </button>
+          <Link to="/dashboard" className="w-1/3">
+            <button className="px-16 py-4 bg-text w-full text-background rounded-lg hover:bg-text/80 transition duration-300 ease-in-out">
+              Import
+            </button>
+          </Link>
         </div>
         <div className="flex flex-col place-items-center pt-16 gap-10">
           <b className="text-xl">Why KanSync?</b>
