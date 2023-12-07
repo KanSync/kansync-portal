@@ -45,42 +45,36 @@ const AboutPage = () => {
   return (
     <>
       <Header />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "5em",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 48,
-            fontWeight: 700,
-          }}
-        >
-          About{" "}
-          <span
+      <div className="min-h-screen mx-32">
+        <div className="flex flex-col place-items-center">
+          <div
             style={{
-              background:
-                "linear-gradient(90deg, #FF6D4D 0%, #E64623 54.51%, #D12600 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              fontSize: 48,
+              fontWeight: 700,
             }}
           >
-            Us
-          </span>
+            About{" "}
+            <span
+              style={{
+                background:
+                  "linear-gradient(90deg, #FF6D4D 0%, #E64623 54.51%, #D12600 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Us
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col place-items-center pt-16 gap-10">
+          <b className="text-xl">Why KanSync?</b>
+          <div className="flex flex-row gap-8">
+            <PositiveTextBoxes title="Saves time" />
+            <PositiveTextBoxes title="It's Realistic" />
+            <PositiveTextBoxes title="It's simple" />
+          </div>
         </div>
       </div>
-      <div className="flex flex-col place-items-center pt-16 gap-10">
-        <b className="text-xl">Why KanSync?</b>
-        <div className="flex flex-row">
-          <PositiveTextBoxes title="Saves time" />
-          <PositiveTextBoxes title="It's Realistic" />
-          <PositiveTextBoxes title="It's simple" />
-        </div>
-      </div>
-
       <Footer />
     </>
   );

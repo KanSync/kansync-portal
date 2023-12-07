@@ -3,7 +3,11 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "tic-tac-toe": "url(./src/assets/tic-tac-toe.svg)",
+      },
+    },
     colors: {
       text: "#180202",
       background: "#FAFAFA",
