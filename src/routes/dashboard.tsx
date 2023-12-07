@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import Header from "../header";
 import { useProject } from "../providers/ProjectProvider";
 
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import PlusCircle from "../assets/plus-circle.svg";
+import JuicyButton from "../juicybutton";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -17,12 +18,17 @@ const BoardImporter = () => {
     setReceivedValue(value);
   };
 
+  const [currentPlatform, setCurrentPlatform] = useState<string>("");
+  const handlePlatformChange = (value: string) => {
+    setCurrentPlatform(value);
+  };
+
   const { addProject, activeProjects } = useProject();
 
   const handleClick = useCallback(() => {
     addProject({
       name: receivedValue,
-      platform: "Github",
+      platform: currentPlatform, 
     });
   }, [addProject, receivedValue]);
 
@@ -33,19 +39,23 @@ const BoardImporter = () => {
       </p>
       <div className="w-full max-w-3xl px-8 py-16 bg-gradient-to-b from-accent to-primary rounded-sm shadow-inner">
         <Tab.Group>
+     
           <Tab.List className="flex space-x-3 rounded-xl bg-background/20 p-1 shadow-lg">
+
             {Object.keys(activeProjects).map((category) => (
-              <Tab
-                key={category}
-                className={({ selected }) =>
+              <Tab 
+                key={category}   
+                onClick={() => handlePlatformChange(category)}
+                className={({ selected }) =>       
                   classNames(
                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
                     "ring-background/60 ring-offset-2 ring-offset-accent focus:outline-none focus:ring-2",
-                    selected
-                      ? "bg-background text-text shadow"
+                    selected 
+                      ? "bg-background text-text shadow" 
                       : "text-secondary hover:bg-background/[0.12] hover:text-background",
                   )
                 }
+  
               >
                 {category}
               </Tab>
@@ -67,9 +77,22 @@ const BoardImporter = () => {
                         placeholder="Enter name of repository"
                         onChildValueChange={handleChildValueChange}
                       />
-                      <button className="hover:bg-accent" onClick={handleClick}>
-                        <img src={PlusCircle} className="w-16" alt="" />
-                      </button>
+                      <JuicyButton onClick={handleClick}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                          />
+                        </svg>
+                      </JuicyButton>
                     </div>
                   </li>
 
@@ -106,16 +129,14 @@ const Dashboard = () => {
     <>
       <Header />
       <div className="flex flex-col flex-1 gap-8 place-items-center py-16">
-        <BoardImporter />
         {(activeProjects.Github.length > 0 ||
           activeProjects.Jira.length > 0 ||
           activeProjects.Trello.length > 0) && (
-          <Link to="/kanban" className="flex place-content-center">
-            <button className="bg-text text-background px-16 py-4 rounded-md">
-              Continue with selected boards
-            </button>
+          <Link to="/kanban/overview" className="flex place-content-center">
+            <JuicyButton>Continue with selected boards</JuicyButton>
           </Link>
         )}
+        <BoardImporter />
       </div>
     </>
   );
