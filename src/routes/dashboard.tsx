@@ -30,6 +30,15 @@ const BoardImporter = () => {
 
   const { addProject, activeProjects } = useProject();
 
+
+  const adder = (addProjectl, receivedValue1l,receivedValue2l) => {
+    addProjectl({
+      name: receivedValue2l,
+      owner: receivedValue1l,
+      platform: currentPlatform, 
+    });
+  };
+
 /*
   const canClick = useCallback(() => {
     activeProjects.Github.map((project) => {
@@ -42,14 +51,19 @@ const BoardImporter = () => {
   }, [receivedValue1]);
 */
   const handleClick = useCallback(() => {
-    //if(receivedValue1 == "" || receivedValue2 == "" || currentPlatform == "") { return}
-  
-    addProject({
-      name: receivedValue1,
-      owner: receivedValue2,
-      platform: currentPlatform, 
+    var pass = true;
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        if(receivedValue1 + receivedValue2 == project.name + project.owner){pass = false}
+      });
     });
-  }, [addProject, receivedValue1, receivedValue2]);
+    if(pass){
+      adder(addProject, receivedValue1,receivedValue2);
+    }
+    
+  }, [addProject, receivedValue1,receivedValue2]);
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -94,15 +108,15 @@ const BoardImporter = () => {
                     <div className="flex flex-row items-center gap-8">                     
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "1"
+                        id = "2"
                         onChildValueChange={handleChildValueChange1}
                       />
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "2"
+                        id = "1"
                         onChildValueChange={handleChildValueChange2}
                       />
-                      <JuicyButton onClick={handleClick}>
+                      <JuicyButton onClick={handleClick} >
                         <svg //JuicyButton onClick={canClick() ? handleClick : undefined}
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -131,6 +145,8 @@ const BoardImporter = () => {
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                        <li>{post.owner}</li>
+                        <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
