@@ -4,19 +4,19 @@ import { get_token_from_backend } from "../utils/oauth";
 import { useAuth } from "../providers/AuthProvider";
 
 const Callback = () => {
-  const {setToken} = useAuth();
+  const {setJira} = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     async function getToken() {
       let oauthToken = await get_token_from_backend();
 
-      setToken(oauthToken)
+      setJira(oauthToken)
     }
 
     getToken();
-    navigate("/");
-  }, [navigate, setToken]);
+    navigate("/dashboard");
+  }, [navigate, setJira]);
 
   return <></>;
 };
