@@ -1,4 +1,4 @@
-import {useState, ChangeEvent} from "react";
+import {useState, ChangeEvent, useEffect} from "react";
 
 interface DefaultInputProps {
     placeholder: string;
@@ -9,14 +9,15 @@ interface DefaultInputProps {
 
 const DefaultInput = ({ placeholder, id, onChildValueChange }: DefaultInputProps) => {
     const [inputValue, setInputValue] = useState<string>("");
+    const [dynamicPlaceholder, setDynamicPlaceholder] = useState<string>("");
   
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
       setInputValue(e.target.value);
       onChildValueChange(e.target.value);
     };
 
-    const placeholderText = (placeholder: string, id: string)=> {
-      placeholder = placeholder+id;
+    const setPlaceholderText  = (placeholder: string, id: string)=> {
+      placeholder = placeholder+id; 
       switch (placeholder) {
         case "Github1":
           return "Enter name of repository" 
@@ -30,14 +31,19 @@ const DefaultInput = ({ placeholder, id, onChildValueChange }: DefaultInputProps
           return "Enter domain of repository" 
         case "Jira2":
           return "Enter project key of repository"
+        default:
+          return "";
     }
   }
+  useEffect(() => {
+    setDynamicPlaceholder(setPlaceholderText(placeholder, id));
+  }, [placeholder, id]);
   
     return (
       <>
         <input
           type="text"
-          placeholder={placeholderText(placeholder, id)}
+          placeholder={dynamicPlaceholder}
           value={inputValue}
           onChange={handleInputChange}
           className="w-full bg-transparent rounded-md border border-stroke dark:border-dark-3 py-[10px] px-3 text-dark-6 outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2"

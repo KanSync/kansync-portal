@@ -23,7 +23,7 @@ const BoardImporter = () => {
     setReceivedValue2(value);
   };
 
-  const [currentPlatform, setCurrentPlatform] = useState<string>("");
+  const [currentPlatform, setCurrentPlatform] = useState<string>("Github");
   const handlePlatformChange = (value: string) => {
     setCurrentPlatform(value);
   };
@@ -39,17 +39,7 @@ const BoardImporter = () => {
     });
   };
 
-/*
-  const canClick = useCallback(() => {
-    activeProjects.Github.map((project) => {
-      if(receivedValue1 === project.name){return false}})
-    activeProjects.Jira.map((project) => {
-      if(receivedValue1 === project.name){return false}})
-    activeProjects.Trello.map((project) => {
-      if(receivedValue1 === project.name){return} false})
-   // return true;
-  }, [receivedValue1]);
-*/
+
   const handleClick = useCallback(() => {
     var pass = true;
     const projectCategories = Object.keys(activeProjects);  
@@ -61,9 +51,9 @@ const BoardImporter = () => {
     });
     if(pass){
       adder(addProject, receivedValue1,receivedValue2);
-    }
-    
+    }  
   }, [addProject, receivedValue1,receivedValue2]);
+
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -150,6 +140,7 @@ const BoardImporter = () => {
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
+                    
                       </ul>
                     </li>
                   ))}
