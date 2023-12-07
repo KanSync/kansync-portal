@@ -1,20 +1,21 @@
+import { OAuth2Token } from "@badgateway/oauth2-client";
 import React from "react";
 import { useContext, useState } from "react";
 
 interface IAuthProvider {
-  token?: string;
-  setToken: (newToken: string) => void;
+  token?: OAuth2Token;
+  setToken: (newToken: OAuth2Token) => void;
 }
 
 const AuthProviderContext = React.createContext<IAuthProvider>({
   token: undefined,
-  setToken: (newToken: string) => {},
+  setToken: (newToken: OAuth2Token) => {},
 });
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [token, setActiveToken] = useState<string>();
+  const [token, setActiveToken] = useState<OAuth2Token>();
 
-  const setToken = (new_token: string) => {
+  const setToken = (new_token: OAuth2Token) => {
     setActiveToken(new_token);
   };
 
