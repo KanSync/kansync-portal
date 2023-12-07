@@ -86,7 +86,9 @@ const BoardImporter = () => {
       </p>
       <div className="w-full max-w-3xl px-8 py-16 bg-gradient-to-b from-accent to-primary rounded-sm shadow-inner">
         <Tab.Group>
+     
           <Tab.List className="flex space-x-3 rounded-xl bg-background/20 p-1 shadow-lg">
+
             {Object.keys(activeProjects).map((category) => (
               <Tab
                 key={category}
@@ -95,11 +97,12 @@ const BoardImporter = () => {
                   classNames(
                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
                     "ring-background/60 ring-offset-2 ring-offset-accent focus:outline-none focus:ring-2",
-                    selected
-                      ? "bg-background text-text shadow"
+                    selected 
+                      ? "bg-background text-text shadow" 
                       : "text-secondary hover:bg-background/[0.12] hover:text-background",
                   )
                 }
+  
               >
                 {category}
               </Tab>
