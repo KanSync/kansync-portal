@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Bolt from "../assets/bolt.svg";
 import Footer from "../footer";
 import Header from "../header";
+import { Link } from "react-router-dom";
 
 const WalkthroughTextBoxes = ({ title }: { title: string }) => {
   return (
@@ -59,64 +60,55 @@ const LandingPage = () => {
   return (
     <>
       <Header />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "5em",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 48,
-            fontWeight: 700,
-          }}
-        >
-          Visualize Your Kanban Board In{" "}
-          <span
+      <div className="px-32 min-h-screen">
+        <div className="flex flex-col gap-8 place-items-center mt-32">
+          <div
             style={{
-              background:
-                "linear-gradient(90deg, #FF6D4D 0%, #E64623 54.51%, #D12600 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              fontSize: 48,
+              fontWeight: 700,
             }}
           >
-            Detail
-          </span>
-        </div>
-
-        <button
-          style={{
-            background: "black",
-            color: "white",
-            width: 280,
-          }}
-        >
-          Import
-        </button>
-      </div>
-      <div className="flex flex-col place-items-center pt-16 gap-10">
-        <b className="text-xl">Why KanSync?</b>
-        <div className="flex flex-row">
-          <PositiveTextBoxes title="Saves time" />
-          <PositiveTextBoxes title="It's Realistic" />
-          <PositiveTextBoxes title="It's simple" />
-        </div>
-      </div>
-      <div className="bg-secondary flex flex-row rounded-3xl p-10 mt-16">
-        <div className="flex flex-col gap-10 flex-1">
-          <b>How does it work</b>
-          <b>Get your personlized dashboard in 4 steps.</b>
-        </div>
-        <div className="flex flex-col flex-1 gap-4">
-          <div className="flex justify-around">
-            <WalkthroughTextBoxes title="1" />
-            <WalkthroughTextBoxes title="2" />
+            Visualize Your Kanban Board In{" "}
+            <span
+              style={{
+                background:
+                  "linear-gradient(90deg, #FF6D4D 0%, #E64623 54.51%, #D12600 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Detail
+            </span>
           </div>
-          <div className="flex justify-around">
-            <WalkthroughTextBoxes title="3" />
-            <WalkthroughTextBoxes title="4" />
+
+          <Link to="/dashboard" className="w-1/3">
+            <button className="px-16 py-4 bg-text w-full text-background rounded-lg hover:bg-text/80 transition duration-300 ease-in-out">
+              Import
+            </button>
+          </Link>
+        </div>
+        <div className="flex flex-col place-items-center pt-16 gap-10">
+          <b className="text-xl">Why KanSync?</b>
+          <div className="flex flex-row gap-8">
+            <PositiveTextBoxes title="Saves time" />
+            <PositiveTextBoxes title="It's Realistic" />
+            <PositiveTextBoxes title="It's simple" />
+          </div>
+        </div>
+        <div className="bg-secondary flex flex-row rounded-3xl p-10 mt-16">
+          <div className="flex flex-col gap-10 flex-1">
+            <b>How does it work</b>
+            <b>Get your personlized dashboard in 4 steps.</b>
+          </div>
+          <div className="flex flex-col flex-1 gap-4">
+            <div className="flex justify-around">
+              <WalkthroughTextBoxes title="1" />
+              <WalkthroughTextBoxes title="2" />
+            </div>
+            <div className="flex justify-around">
+              <WalkthroughTextBoxes title="3" />
+              <WalkthroughTextBoxes title="4" />
+            </div>
           </div>
         </div>
       </div>
