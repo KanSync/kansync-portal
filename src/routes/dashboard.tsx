@@ -6,6 +6,7 @@ import { useProject } from "../providers/ProjectProvider";
 import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import JuicyButton from "../juicybutton";
+import TrelloOAuthComponent from "./trelloLogin-page";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -137,6 +138,8 @@ const Dashboard = () => {
             </JuicyButton>
           </Link>
         )}
+        {/* add trello component */}
+        <TrelloOAuthComponent />
         <BoardImporter />
       </div>
     </>

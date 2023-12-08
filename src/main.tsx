@@ -45,6 +45,10 @@ const router = createBrowserRouter([
     path: "/about",
     element: <AboutPage />,
   },
+  // add path for the callback 
+  {
+    path: "/trello-callback"
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
