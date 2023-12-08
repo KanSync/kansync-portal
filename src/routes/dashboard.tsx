@@ -36,6 +36,7 @@ const BoardImporter = () => {
       name: receivedValue2l,
       owner: receivedValue1l,
       platform: currentPlatform, 
+      checked: false,
     });
   };
 
@@ -46,7 +47,7 @@ const BoardImporter = () => {
     projectCategories.forEach(category => {
       const projectsInCategory = activeProjects[category];
       projectsInCategory.forEach(project => {
-        if(receivedValue1 + receivedValue2 == project.name + project.owner){pass = false}
+        if(receivedValue2 + receivedValue1 == project.name + project.owner){pass = false}
       });
     });
     if(pass){
@@ -54,6 +55,8 @@ const BoardImporter = () => {
     }  
   }, [addProject, receivedValue1,receivedValue2]);
 
+
+  
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -107,7 +110,7 @@ const BoardImporter = () => {
                         onChildValueChange={handleChildValueChange2}
                       />
                       <JuicyButton onClick={handleClick} >
-                        <svg //JuicyButton onClick={canClick() ? handleClick : undefined}
+                        <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -126,6 +129,7 @@ const BoardImporter = () => {
                   </li>
 
                   {posts.map((post) => (
+                    
                     <li
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
@@ -140,6 +144,7 @@ const BoardImporter = () => {
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
+  
                     
                       </ul>
                     </li>

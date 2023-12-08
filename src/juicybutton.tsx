@@ -6,7 +6,6 @@ const JuicyButton = ({
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children: React.ReactNode;
   className?: string;
- //</HTMLButtonElement> disabled: boolean;
 }) => {
   return (
     <button
