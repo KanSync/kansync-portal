@@ -20,9 +20,9 @@ const DefaultInput = ({ placeholder, id, onChildValueChange }: DefaultInputProps
       placeholder = placeholder+id; 
       switch (placeholder) {
         case "Github1":
-          return "Enter name of repository" 
+          return "Enter name of project" 
         case "Github2":
-            return "Enter owner of repository"
+            return "Enter repository"
         case "Trello1":
           return "Enter board ID of repository" 
         case "Trello2":
