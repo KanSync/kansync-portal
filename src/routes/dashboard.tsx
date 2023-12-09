@@ -6,10 +6,15 @@ import { useProject } from "../providers/ProjectProvider";
 import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import JuicyButton from "../juicybutton";
-import TrelloOAuthComponent from "./trelloLogin-page";
+
+const BACKEND_TRELLO_OAUTH_URL = 'http://localhost:3000/';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+export async function oauth_trello() {
+  window.location.href = BACKEND_TRELLO_OAUTH_URL;
 }
 
 const BoardImporter = () => {
@@ -26,11 +31,26 @@ const BoardImporter = () => {
   const { addProject, activeProjects } = useProject();
 
   const handleClick = useCallback(() => {
+    switch (currentPlatform) {
+      case "Jira":
+        break;
+
+      case "Github":
+        break;
+
+      case "Trello":
+        oauth_trello();
+        break;
+
+      default:
+        break;
+    }
+
     addProject({
       name: receivedValue,
-      platform: currentPlatform, 
+      platform: currentPlatform,
     });
-  }, [addProject, receivedValue]);
+  }, [addProject, currentPlatform, receivedValue]);
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -139,7 +159,6 @@ const Dashboard = () => {
           </Link>
         )}
         {/* add trello component */}
-        <TrelloOAuthComponent />
         <BoardImporter />
       </div>
     </>
