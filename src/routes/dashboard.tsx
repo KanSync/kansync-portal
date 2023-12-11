@@ -28,7 +28,7 @@ const BoardImporter = () => {
     setCurrentPlatform(value);
   };
 
-  const { addProject, activeProjects } = useProject();
+  const { addProject, activeProjects} = useProject();
 
 
   const adder = (addProjectl, receivedValue1l,receivedValue2l) => {
@@ -39,6 +39,7 @@ const BoardImporter = () => {
       checked: false,
     });
   };
+
 
 
   const handleClick = useCallback(() => {
@@ -56,7 +57,63 @@ const BoardImporter = () => {
   }, [addProject, receivedValue1,receivedValue2]);
 
 
+  const handleChange = (post) => {
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        if(post.name + post.owner == project.name + project.owner){
+          project.checked = !project.checked;
+         }
+      });
+    });
+  };
+
   
+  const getCurrent = (post) => {
+    let isChecked = false;
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        console.log("_________");
+        console.log(post.name + post.owner);
+        console.log(",");
+        console.log(project.name + project.owner);
+        if(post.name + post.owner == project.name + project.owner){
+          console.log(project.checked);
+          isChecked = project.checked;
+          return project.checked //for fast-nonpersistant version
+         }
+      });
+    });
+    //return isChecked; //for slow-persistant version
+  };
+  
+ 
+
+  //const myCheckbox = ({onClick}
+  function Checkbox({ initialValue, onClick}) {
+    const [checked, setChecked] = React.useState(initialValue);
+  
+    const handleChangee = () => {
+      setChecked((state) => !state);
+    };
+  
+    return (
+      <label>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={handleChangee}
+          defaultChecked={checked}
+          onClick={onClick}
+        />
+      </label>
+    );
+  }
+  
+
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -129,23 +186,25 @@ const BoardImporter = () => {
                   </li>
 
                   {posts.map((post) => (
-                    
+                    // {post.name}
                     <li
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
                     >
                       <h3 className="text-sm font-medium leading-5">
-                        {post.name}
+                     
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                        <li> <label><input type="checkbox" checked={getCurrent(post)} defaultChecked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
                         <li>{post.owner}</li>
                         <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
-                        <li>{post.platform}</li>
-  
-                    
+                        <li>{post.platform}</li>  
+                        <li>&middot;</li>
+                        <li>{String(post.checked)}</li>          
+                        
                       </ul>
                     </li>
                   ))}
@@ -158,9 +217,12 @@ const BoardImporter = () => {
     </div>
   );
 };
-
+  //<li> <label><input type="checkbox" checked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
+// <li> <label><Checkbox initialValue={() => {getCurrent(post)}} onClick={() => {handleChange(post)}} /></label></li>  
 const Dashboard = () => {
   const activeProjects = useProject().activeProjects;
+
+//JuicyButton onclick creates list with only selected boards?
 
   return (
     <>
