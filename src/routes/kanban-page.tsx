@@ -2,6 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 import EllipsisVertical from "../assets/ellipsis-vertical.svg";
 import UserCircle from "../assets/user-circle.svg";
 import Header from "../header";
+import { useUser } from "../providers/UserProvider";
 
 const ShinyButton = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -12,6 +13,8 @@ const ShinyButton = ({ children }: { children: React.ReactNode }) => {
 };
 
 const KanbanPage = () => {
+  const user = useUser().user;
+
   return (
     <>
       <Header />
@@ -19,7 +22,7 @@ const KanbanPage = () => {
         <div className="flex flex-col w-1/5 py-8 px-4 border rounded-lg">
           <div className="flex w-full justify-between items-center bg-background shadow-md p-4 rounded-full">
             <img src={UserCircle} className="w-8" alt="" />
-            Guest
+            {user.nickname}
             <img src={EllipsisVertical} className="w-8" alt="" />
           </div>
           <div className="flex-1 flex flex-col gap-8 py-32">
