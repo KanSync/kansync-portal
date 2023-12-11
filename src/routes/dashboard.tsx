@@ -40,6 +40,9 @@ const BoardImporter = () => {
     });
   };
 
+  const allowedProjectNames = ['ProjectA', 'ProjectB', 'ProjectC'];
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
 
   const handleClick = useCallback(() => {
@@ -48,10 +51,18 @@ const BoardImporter = () => {
     projectCategories.forEach(category => {
       const projectsInCategory = activeProjects[category];
       projectsInCategory.forEach(project => {
-        if(receivedValue2 + receivedValue1 == project.name + project.owner){pass = false}
+        if(receivedValue2 + receivedValue1 == project.name + project.owner){
+          pass = false
+          setErrorMessage('Project is already added');
+        }
       });
     });
+    if(!allowedProjectNames.includes(receivedValue2)){  //TODO: change to if not recive error (not found in backend) when calling (also save data in this stage?)
+      pass = false
+      setErrorMessage('Project does not exist');
+    }
     if(pass){
+      setErrorMessage("");
       adder(addProject, receivedValue1,receivedValue2);
     }  
   }, [addProject, receivedValue1,receivedValue2]);
@@ -116,7 +127,7 @@ const BoardImporter = () => {
 
 
   return (
-    <div className="w-full flex flex-col place-items-center">
+    <div className="w-full flex flex-col place-items-center">   
       <p className="text-text text-xl pb-4 self-center">
         Import your boards from:
       </p>
@@ -155,7 +166,7 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">                     
+                    <div className="flex flex-row items-center gap-8">                           
                       <DefaultInput
                         placeholder={currentPlatform}
                         id = "2"
@@ -184,7 +195,7 @@ const BoardImporter = () => {
                       </JuicyButton>
                     </div>
                   </li>
-
+                 
                   {posts.map((post) => (
                     // {post.name}
                     <li
@@ -208,14 +219,20 @@ const BoardImporter = () => {
                       </ul>
                     </li>
                   ))}
-                </ul>
-              </Tab.Panel>
+                </ul>                
+              </Tab.Panel>             
             ))}
-          </Tab.Panels>
-        </Tab.Group>
+          </Tab.Panels>        
+        </Tab.Group>     
       </div>
+      {errorMessage && (
+           <p className="text-text text-xl pb-4 self-center">
+        {errorMessage}</p>
+      )}
     </div>
+    
   );
+  
 };
   //<li> <label><input type="checkbox" checked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
 // <li> <label><Checkbox initialValue={() => {getCurrent(post)}} onClick={() => {handleChange(post)}} /></label></li>  
