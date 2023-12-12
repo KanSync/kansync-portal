@@ -35,7 +35,8 @@ const BoardImporter = () => {
       name: receivedValue2l,
       owner: receivedValue1l,
       platform: currentPlatform, 
-      checked: false,
+      lastUpdate: new Date(),
+
     });
   };
 
@@ -55,7 +56,18 @@ const BoardImporter = () => {
   }, [addProject, receivedValue1,receivedValue2]);
 
 
-  
+  const handleUpdate = (post) => {
+    const currentDate = new Date();
+    post.lastUpdate = currentDate;
+    //updata data with data from new request
+  };
+
+  const lastUpdateInDays = (post) => {
+    const currentDate = new Date();
+    const differenceInTime = currentDate.getTime() - post.lastUpdate.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return Math.floor(differenceInDays);
+  }
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -133,6 +145,8 @@ const BoardImporter = () => {
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
                     >
+                      <div className="flex justify-between items-center">
+                      <div>
                       <h3 className="text-sm font-medium leading-5">
                         {post.name}
                       </h3>
@@ -143,12 +157,22 @@ const BoardImporter = () => {
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
-  
-                    
-                      </ul>
+                        </ul>
+                        
+                        </div>
+                        <span className="text-xs text-gray-400">{`Updated ${lastUpdateInDays(post)} days ago`}</span>
+                        <button
+                          onClick={() => handleUpdate(post)}
+                          className= "text-background p-4 rounded-full hover:bg-text/80 shadow-lg transform hover:scale-110 transition duration-300 ease-in-out active:scale-75 bg-text">
+                          Update                  
+                      
+                        </button>
+                        </div>
+                      
                     </li>
                   ))}
                 </ul>
+               
               </Tab.Panel>
             ))}
           </Tab.Panels>

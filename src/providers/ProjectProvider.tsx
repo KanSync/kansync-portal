@@ -5,6 +5,7 @@ interface IProject {
   name: string;
   owner: string;
   platform: string;
+  currentDate: Date;
 }
 
 interface IProjectProvider {
