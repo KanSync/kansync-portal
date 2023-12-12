@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 
 interface IProject {
   name: string;
+  owner: string;
   platform: string;
 }
 

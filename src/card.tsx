@@ -55,12 +55,7 @@ const Card = ({ title }: { title: string }) => {
         </div>
       </div>
       {isAddNewProjectCardVisible && <AddCard title={title} />}
-      {activeProjects.map(
-        (project) =>
-          title === project.platform && (
-            <DisplayCard projectName={project.name} />
-          ),
-      )}
+    
     </div>
   );
 };

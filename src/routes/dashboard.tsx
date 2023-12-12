@@ -18,39 +18,50 @@ export async function oauth_trello() {
 }
 
 const BoardImporter = () => {
-  const [receivedValue, setReceivedValue] = useState<string>("");
-  const handleChildValueChange = (value: string) => {
-    setReceivedValue(value);
+  const [receivedValue1, setReceivedValue1] = useState<string>("");
+  const handleChildValueChange1 = (value: string) => {
+    setReceivedValue1(value);
   };
 
-  const [currentPlatform, setCurrentPlatform] = useState<string>("");
+  const [receivedValue2, setReceivedValue2] = useState<string>("");
+  const handleChildValueChange2 = (value: string) => {
+    setReceivedValue2(value);
+  };
+
+  const [currentPlatform, setCurrentPlatform] = useState<string>("Github");
   const handlePlatformChange = (value: string) => {
     setCurrentPlatform(value);
   };
 
   const { addProject, activeProjects } = useProject();
 
-  const handleClick = useCallback(() => {
-    switch (currentPlatform) {
-      case "Jira":
-        break;
 
-      case "Github":
-        break;
-
-      case "Trello":
-        oauth_trello();
-        break;
-
-      default:
-        break;
-    }
-
-    addProject({
-      name: receivedValue,
-      platform: currentPlatform,
+  const adder = (addProjectl, receivedValue1l,receivedValue2l) => {
+    addProjectl({
+      name: receivedValue2l,
+      owner: receivedValue1l,
+      platform: currentPlatform, 
+      checked: false,
     });
-  }, [addProject, currentPlatform, receivedValue]);
+  };
+
+
+  const handleClick = useCallback(() => {
+    var pass = true;
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        if(receivedValue2 + receivedValue1 == project.name + project.owner){pass = false}
+      });
+    });
+    if(pass){
+      adder(addProject, receivedValue1,receivedValue2);
+    }  
+  }, [addProject, receivedValue1,receivedValue2]);
+
+
+  
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -92,13 +103,19 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">
+                    <div className="flex flex-row items-center gap-8">                     
                       <DefaultInput
-                        placeholder="Enter name of repository"
-                        onChildValueChange={handleChildValueChange}
+                        placeholder={currentPlatform}
+                        id = "2"
+                        onChildValueChange={handleChildValueChange1}
+                      />
+                      <DefaultInput
+                        placeholder={currentPlatform}
+                        id = "1"
+                        onChildValueChange={handleChildValueChange2}
                       />
                       <JuicyButton onClick={handleClick} className="bg-text">
-                        <svg
+                        <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -117,6 +134,7 @@ const BoardImporter = () => {
                   </li>
 
                   {posts.map((post) => (
+                    
                     <li
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
@@ -126,9 +144,13 @@ const BoardImporter = () => {
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                        <li>{post.owner}</li>
+                        <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
+  
+                    
                       </ul>
                     </li>
                   ))}
