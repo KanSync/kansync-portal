@@ -2,13 +2,38 @@ import { Tab } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import Header from "../header";
 import { useProject } from "../providers/ProjectProvider";
+import { useAuth } from "../providers/AuthProvider";
 
 import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import JuicyButton from "../juicybutton";
+import { oauth_jira } from "../utils/oauth";
+import { OAuth2Token } from "@badgateway/oauth2-client";
+
+const BACKEND_JIRA_URL: string = "https://local.functions.nhost.run/v1/jira/";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+async function getJiraIssues(
+  projectKey: string,
+  domainName: string,
+  oAuthToken: OAuth2Token,
+) {
+  const result = await fetch(
+    BACKEND_JIRA_URL +
+      "?" +
+      new URLSearchParams({ projectKey: projectKey, name: domainName }),
+    {
+      headers: {
+        Authorization: "Bearer " + oAuthToken.accessToken,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  return await result.json();
 }
 
 const BoardImporter = () => {
@@ -29,33 +54,64 @@ const BoardImporter = () => {
 
   const { addProject, activeProjects } = useProject();
 
-
-  const adder = (addProjectl, receivedValue1l,receivedValue2l) => {
+  const adder = (addProjectl, receivedValue1l, receivedValue2l) => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
-      platform: currentPlatform, 
+      platform: currentPlatform,
       checked: false,
     });
   };
 
+  let { jiraToken } = useAuth();
 
   const handleClick = useCallback(() => {
     var pass = true;
-    const projectCategories = Object.keys(activeProjects);  
-    projectCategories.forEach(category => {
+    const projectCategories = Object.keys(activeProjects);
+    projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(project => {
-        if(receivedValue2 + receivedValue1 == project.name + project.owner){pass = false}
+      projectsInCategory.forEach((project) => {
+        if (receivedValue2 + receivedValue1 === project.name + project.owner) {
+          pass = false;
+        }
       });
     });
-    if(pass){
-      adder(addProject, receivedValue1,receivedValue2);
-    }  
-  }, [addProject, receivedValue1,receivedValue2]);
 
+    if (!pass) {
+      return;
+    }
 
-  
+    adder(addProject, receivedValue1, receivedValue2);
+
+    switch (currentPlatform) {
+      case "Jira":
+        if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
+          oauth_jira();
+        }
+
+        getJiraIssues("KAN", "iwouldliketotestthis", jiraToken!).then((resp) =>
+          console.log(resp),
+        );
+        break;
+
+      case "Github":
+        break;
+
+      case "Trello":
+        break;
+
+      default:
+        break;
+    }
+  }, [
+    addProject,
+    currentPlatform,
+    receivedValue1,
+    receivedValue2,
+    jiraToken,
+    adder,
+    activeProjects,
+  ]);
 
   return (
     <div className="w-full flex flex-col place-items-center">
@@ -64,23 +120,20 @@ const BoardImporter = () => {
       </p>
       <div className="w-full max-w-3xl px-8 py-16 bg-gradient-to-b from-accent to-primary rounded-sm shadow-inner">
         <Tab.Group>
-     
           <Tab.List className="flex space-x-3 rounded-xl bg-background/20 p-1 shadow-lg">
-
             {Object.keys(activeProjects).map((category) => (
-              <Tab 
-                key={category}   
+              <Tab
+                key={category}
                 onClick={() => handlePlatformChange(category)}
-                className={({ selected }) =>       
+                className={({ selected }) =>
                   classNames(
                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
                     "ring-background/60 ring-offset-2 ring-offset-accent focus:outline-none focus:ring-2",
-                    selected 
-                      ? "bg-background text-text shadow" 
+                    selected
+                      ? "bg-background text-text shadow"
                       : "text-secondary hover:bg-background/[0.12] hover:text-background",
                   )
                 }
-  
               >
                 {category}
               </Tab>
@@ -97,19 +150,19 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">                     
+                    <div className="flex flex-row items-center gap-8">
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "2"
+                        id="2"
                         onChildValueChange={handleChildValueChange1}
                       />
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "1"
+                        id="1"
                         onChildValueChange={handleChildValueChange2}
                       />
                       <JuicyButton onClick={handleClick} className="bg-text">
-                        <svg 
+                        <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -128,7 +181,6 @@ const BoardImporter = () => {
                   </li>
 
                   {posts.map((post) => (
-                    
                     <li
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
@@ -143,8 +195,6 @@ const BoardImporter = () => {
                         <li>{post.name}</li>
                         <li>&middot;</li>
                         <li>{post.platform}</li>
-  
-                    
                       </ul>
                     </li>
                   ))}
