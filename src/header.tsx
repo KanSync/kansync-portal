@@ -26,10 +26,26 @@ const Header = () => {
     setIsOpen(true);
   }, []);
 
-  const handleClick = useCallback(() => {
-    console.log("Input is " + input);
-    user.setNickname(input);
-    setIsOpen(false);
+  const handleLogin = useCallback(async () => {
+    const result = await fetch(
+      "https://local.functions.nhost.run/v1/user/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ login: input }),
+      },
+    );
+    console.log(result);
+
+    if (result.ok) {
+      user.setNickname(input);
+      setIsOpen(false);
+    } else {
+      // TODO: This should be made nicer
+      alert("Login failed");
+    }
   }, [input, user]);
 
   return (
@@ -92,7 +108,7 @@ const Header = () => {
                         onInput={handleInput}
                       />
 
-                      <JuicyButton onClick={handleClick} className="bg-text">
+                      <JuicyButton onClick={handleLogin} className="bg-text">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
