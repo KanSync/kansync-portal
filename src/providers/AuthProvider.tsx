@@ -43,7 +43,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         githubToken,
         setGithub,
         trelloToken,
-        setTrello
+        setTrello,
       }}
     >
       {children}
