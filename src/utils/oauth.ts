@@ -14,7 +14,7 @@ export const SCOPE = {
 // TODO: Hash of the users session ID, works for now but unsafe
 export const STATE = {
     jira: 'jira-',
-    github: 'gihtub-'
+    github: 'github-'
 };
 
 export const jira_client = new OAuth2Client({
