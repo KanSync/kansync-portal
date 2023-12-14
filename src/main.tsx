@@ -8,6 +8,8 @@ import "./index.css";
 import { ProjectProvider } from "./providers/ProjectProvider.tsx";
 import KanbanPage from "./routes/kanban-page.tsx";
 import AboutPage from "./routes/about-page.tsx";
+import { AuthProvider } from "./providers/AuthProvider.tsx";
+import Callback from "./routes/callback-page.tsx";
 import Overview from "./routes/overview.tsx";
 import Board from "./routes/board.tsx";
 import Graphs from "./routes/graphs.tsx";
@@ -45,18 +47,20 @@ const router = createBrowserRouter([
     path: "/about",
     element: <AboutPage />,
   },
-  // add path for the callback 
   {
-    path: "/trello-callback"
-  }
+    path: "/callback",
+    element: <Callback />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <UserProvider>
-      <ProjectProvider>
-        <RouterProvider router={router} />
-      </ProjectProvider>
-    </UserProvider>
+    <AuthProvider>
+      <UserProvider>
+        <ProjectProvider>
+          <RouterProvider router={router} />
+        </ProjectProvider>
+      </UserProvider>
+    </AuthProvider>
   </React.StrictMode>,
 );
