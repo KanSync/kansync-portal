@@ -85,7 +85,7 @@ const BoardImporter = () => {
         break;
 
       case "Github":
-        if (!githubToken || githubToken.expiresAt! < Date.now()) {
+        if (!githubToken) {
           oauth(SCOPE.github, STATE.github, github_client);
         }
 
