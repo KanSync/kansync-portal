@@ -42,27 +42,32 @@ async function getJiraIssues(
   return await result.json();
 }
 
-const BoardImporter = () => {
-  const [receivedValue1, setReceivedValue1] = useState<string>("");
-  const handleChildValueChange1 = (value: string) => {
-    setReceivedValue1(value);
-  };
+// const BoardImporter = () => {
+//   const [receivedValue1, setReceivedValue1] = useState<string>("");
+//   const handleChildValueChange1 = (value: string) => {
+//     setReceivedValue1(value);
+//   };
 
 
 const BoardImporter = () => {
-  const [receivedValue, setReceivedValue] = useState<string>("");
+  const [receivedValue2, setReceivedValue2] = useState<string>("");
   const handleChildValueChange = (value: string) => {
-    setReceivedValue(value);
+    setReceivedValue2(value);
   };
 
   const [currentPlatform, setCurrentPlatform] = useState<string>("");
   const handlePlatformChange = (value: string) => {
     setCurrentPlatform(value);
   };
+  const [receivedValue1, setReceivedValue1] = useState<string>("");
+  const handleChildValueChange1 = (value: string) => {
+    setReceivedValue1(value);
+  };
+
 
   const { addProject, activeProjects } = useProject();
 
-  const adder = (addProjectl, receivedValue1l, receivedValue2l) => {
+  const adder = (addProjectl, receivedValue1l: string, receivedValue2l: any) => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
@@ -78,7 +83,7 @@ const BoardImporter = () => {
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project) => {
+      projectsInCategory.forEach((project: { name: any; owner: any; }) => {
         if (receivedValue2 + receivedValue1 === project.name + project.owner) {
           pass = false;
         }
@@ -168,7 +173,7 @@ const BoardImporter = () => {
                       <DefaultInput
                         placeholder={currentPlatform}
                         id="1"
-                        onChildValueChange={handleChildValueChange2}
+                        onChildValueChange={handleChildValueChange}
                       />
                       <JuicyButton onClick={handleClick} className="bg-text">
                         <svg
