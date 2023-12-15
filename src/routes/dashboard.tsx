@@ -10,9 +10,18 @@ import JuicyButton from "../juicybutton";
 import { oauth_jira } from "../utils/oauth";
 import { OAuth2Token } from "@badgateway/oauth2-client";
 
+const url = new URLSearchParams({
+
+  boardId: "CLn3TTDH",
+});
 const BACKEND_JIRA_URL: string = "https://local.functions.nhost.run/v1/jira/";
 
-const BACKEND_TRELLO_OAUTH_URL = 'http://localhost:3000/';
+
+// const BACKEND_TRELLO_OAUTH_URL1 =
+//   "https://local.functions.nhost.run/v1/trello/oauth";
+
+const BACKEND_TRELLO_OAUTH_URL =
+  "https://local.functions.nhost.run/v1/trello/?" + url;
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -48,7 +57,6 @@ async function getJiraIssues(
 //     setReceivedValue1(value);
 //   };
 
-
 const BoardImporter = () => {
   const [receivedValue2, setReceivedValue2] = useState<string>("");
   const handleChildValueChange = (value: string) => {
@@ -64,10 +72,13 @@ const BoardImporter = () => {
     setReceivedValue1(value);
   };
 
-
   const { addProject, activeProjects } = useProject();
 
-  const adder = (addProjectl, receivedValue1l: string, receivedValue2l: any) => {
+  const adder = (
+    addProjectl,
+    receivedValue1l: string,
+    receivedValue2l: any,
+  ) => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
@@ -83,7 +94,7 @@ const BoardImporter = () => {
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project: { name: any; owner: any; }) => {
+      projectsInCategory.forEach((project: { name: any; owner: any }) => {
         if (receivedValue2 + receivedValue1 === project.name + project.owner) {
           pass = false;
         }
