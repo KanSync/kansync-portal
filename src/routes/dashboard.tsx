@@ -84,9 +84,10 @@ const BoardImporter = () => {
       pass = false;
       setErrorMessage("Project does not exist");
     }
-    if (!pass) {
-      return;
-    }
+    // TODO: Add this later when error checking is complete 
+    // if (!pass) {
+    //   return;
+    // }
     setErrorMessage("");
     adder(addProject, receivedValue1, receivedValue2);
 
