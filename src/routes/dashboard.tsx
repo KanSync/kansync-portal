@@ -249,11 +249,12 @@ const BoardImporter = () => {
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                      <li> <label><input type="checkbox" checked={getCurrent(post)} defaultChecked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
                         <li>{post.owner}</li>
                         <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
-                        <li>{post.platform}</li>
+                        <li>{post.platform}</li>  
 
                         </ul>
                         

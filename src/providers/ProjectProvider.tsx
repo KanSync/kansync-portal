@@ -6,6 +6,7 @@ interface IProject {
   owner: string;
   platform: string;
   currentDate: Date;
+  checked: boolean;
 }
 
 interface IProjectProvider {
