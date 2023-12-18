@@ -46,17 +46,6 @@ const LandingPage = () => {
     data: null,
   });
 
-  useEffect(() => {
-    async function asyncFunction() {
-      const result = await fetch(
-        "https://local.functions.nhost.run/v1/hello_world",
-      ).then((res) => res.json());
-      setResult(result);
-    }
-
-    asyncFunction();
-  }, []);
-
   return (
     <>
       <Header />
