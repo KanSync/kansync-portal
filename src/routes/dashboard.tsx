@@ -46,6 +46,7 @@ const BoardImporter = () => {
 
   const { addProject, activeProjects } = useProject();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const adder = (
     addProjectl,
     receivedValue1l: string,
@@ -61,6 +62,7 @@ const BoardImporter = () => {
 
   let { jiraToken, githubToken, trelloToken } = useAuth();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const allowedProjectNames = ["ProjectA", "ProjectB", "ProjectC"];
 
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -134,40 +136,45 @@ const BoardImporter = () => {
         break;
     }
   }, [
-    addProject,
-    currentPlatform,
-    receivedValue1,
+    activeProjects,
+    allowedProjectNames,
     receivedValue2,
+    adder,
+    addProject,
+    receivedValue1,
+    currentPlatform,
     jiraToken,
     githubToken,
     trelloToken,
-    adder,
-    activeProjects,
   ]);
 
-  const handleChange = (post) => {
+  const handleChange = (post: { name: any; owner: any }) => {
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project) => {
-        if (post.name + post.owner == project.name + project.owner) {
-          project.checked = !project.checked;
-        }
-      });
+      projectsInCategory.forEach(
+        (project: { name: any; owner: any; checked: boolean }) => {
+          if (post.name + post.owner === project.name + project.owner) {
+            project.checked = !project.checked;
+          }
+        },
+      );
     });
   };
 
-  const getCurrent = (post) => {
+  const getCurrent = (post: { name: any; owner: any }) => {
     let isChecked = false;
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project) => {
-        if (post.name + post.owner == project.name + project.owner) {
-          isChecked = project.checked;
-          return project.checked; //for fast-nonpersistant version
-        }
-      });
+      projectsInCategory.forEach(
+        (project: { name: any; owner: any; checked: boolean }) => {
+          if (post.name + post.owner === project.name + project.owner) {
+            isChecked = project.checked;
+            return project.checked; //for fast-nonpersistant version
+          }
+        },
+      );
     });
     //return isChecked; //for slow-persistant version
   };
