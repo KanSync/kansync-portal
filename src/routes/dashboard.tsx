@@ -61,7 +61,11 @@ const BoardImporter = () => {
 
   let { jiraToken, githubToken, trelloToken } = useAuth();
 
-  const handleClick = useCallback(async () => {
+  const allowedProjectNames = ['ProjectA', 'ProjectB', 'ProjectC'];
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleClick = useCallback(() => {
     var pass = true;
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
@@ -69,14 +73,18 @@ const BoardImporter = () => {
       projectsInCategory.forEach((project: { name: any; owner: any }) => {
         if (receivedValue2 + receivedValue1 === project.name + project.owner) {
           pass = false;
+          setErrorMessage('Project is already added');
         }
       });
     });
-
+    if(!allowedProjectNames.includes(receivedValue2)){  //TODO: change to if not recive error (not found in backend) when calling (also save data in this stage?)
+      pass = false
+      setErrorMessage('Project does not exist');
+    }
     if (!pass) {
       return;
     }
-
+    setErrorMessage("");
     adder(addProject, receivedValue1, receivedValue2);
 
     switch (currentPlatform) {
@@ -135,9 +143,38 @@ const BoardImporter = () => {
     adder,
     activeProjects,
   ]);
+              
+  const handleChange = (post) => {
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        if(post.name + post.owner == project.name + project.owner){
+          project.checked = !project.checked;
+         }
+      });
+    });
+  };
+
+  
+  const getCurrent = (post) => {
+    let isChecked = false;
+    const projectCategories = Object.keys(activeProjects);  
+    projectCategories.forEach(category => {
+      const projectsInCategory = activeProjects[category];
+      projectsInCategory.forEach(project => {
+        if(post.name + post.owner == project.name + project.owner){
+          isChecked = project.checked;
+          return project.checked //for fast-nonpersistant version
+         }
+      });
+    });
+    //return isChecked; //for slow-persistant version
+  };
+  
 
   return (
-    <div className="w-full flex flex-col place-items-center">
+    <div className="w-full flex flex-col place-items-center">   
       <p className="text-text text-xl pb-4 self-center">
         Import your boards from:
       </p>
@@ -173,7 +210,7 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">
+                    <div className="flex flex-row items-center gap-8">                        
                       <DefaultInput
                         placeholder={currentPlatform}
                         id="2"
@@ -202,7 +239,7 @@ const BoardImporter = () => {
                       </JuicyButton>
                     </div>
                   </li>
-
+                 
                   {posts.map((post) => (
                     <li
                       key={post.name}
@@ -219,14 +256,20 @@ const BoardImporter = () => {
                       </ul>
                     </li>
                   ))}
-                </ul>
-              </Tab.Panel>
+                </ul>                
+              </Tab.Panel>             
             ))}
-          </Tab.Panels>
-        </Tab.Group>
+          </Tab.Panels>        
+        </Tab.Group>     
       </div>
+      {errorMessage && (
+           <p className="text-text text-xl pb-4 self-center">
+        {errorMessage}</p>
+      )}
     </div>
+    
   );
+  
 };
 
 const Dashboard = () => {
