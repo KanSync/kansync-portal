@@ -7,14 +7,18 @@ import { useAuth } from "../providers/AuthProvider";
 import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import JuicyButton from "../juicybutton";
-import { oauth_jira } from "../utils/oauth";
-import { OAuth2Token } from "@badgateway/oauth2-client";
-
-const url = new URLSearchParams({
-
-  boardId: "CLn3TTDH",
-});
-const BACKEND_JIRA_URL: string = "https://local.functions.nhost.run/v1/jira/";
+import {
+  SCOPE,
+  STATE,
+  github_client,
+  jira_client,
+  oauth,
+} from "../utils/oauth";
+import {
+  BACKEND_GITHUB_URL,
+  BACKEND_JIRA_URL,
+  getIssues,
+} from "../utils/issues";
 
 
 // const BACKEND_TRELLO_OAUTH_URL1 =
@@ -26,36 +30,6 @@ const BACKEND_TRELLO_OAUTH_URL =
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
-
-export async function oauth_trello() {
-  window.location.href = BACKEND_TRELLO_OAUTH_URL;
-}
-
-async function getJiraIssues(
-  projectKey: string,
-  domainName: string,
-  oAuthToken: OAuth2Token,
-) {
-  const result = await fetch(
-    BACKEND_JIRA_URL +
-      "?" +
-      new URLSearchParams({ projectKey: projectKey, name: domainName }),
-    {
-      headers: {
-        Authorization: "Bearer " + oAuthToken.accessToken,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-
-  return await result.json();
-}
-
-// const BoardImporter = () => {
-//   const [receivedValue1, setReceivedValue1] = useState<string>("");
-//   const handleChildValueChange1 = (value: string) => {
-//     setReceivedValue1(value);
-//   };
 
 const BoardImporter = () => {
   const [receivedValue2, setReceivedValue2] = useState<string>("");
@@ -87,7 +61,7 @@ const BoardImporter = () => {
     });
   };
 
-  let { jiraToken } = useAuth();
+  let { jiraToken, githubToken } = useAuth();
 
   const handleClick = useCallback(() => {
     var pass = true;
@@ -110,15 +84,29 @@ const BoardImporter = () => {
     switch (currentPlatform) {
       case "Jira":
         if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
-          oauth_jira();
+          oauth(SCOPE.jira, STATE.jira, jira_client);
         }
 
-        getJiraIssues("KAN", "iwouldliketotestthis", jiraToken!).then((resp) =>
-          console.log(resp),
-        );
+        getIssues(
+          BACKEND_JIRA_URL,
+          { projectKey: "KAN", name: "iwouldliketotestthis" },
+          jiraToken!,
+        ).then((resp) => console.log(resp));
         break;
 
       case "Github":
+        if (!githubToken) {
+          oauth(SCOPE.github, STATE.github, github_client);
+        }
+
+        getIssues(
+          BACKEND_GITHUB_URL,
+          {
+            repo: "kansync/kansync-server",
+            projectName: "KanSync Project Planner",
+          },
+          githubToken!,
+        ).then((resp) => console.log(resp));
         break;
 
       case "Trello":
@@ -134,6 +122,7 @@ const BoardImporter = () => {
     receivedValue1,
     receivedValue2,
     jiraToken,
+    githubToken,
     adder,
     activeProjects,
   ]);
