@@ -2,11 +2,23 @@ import { Tab } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import Header from "../header";
 import { useProject } from "../providers/ProjectProvider";
+import { useAuth } from "../providers/AuthProvider";
 
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
-import PlusCircle from "../assets/plus-circle.svg";
 import JuicyButton from "../juicybutton";
+import {
+  SCOPE,
+  STATE,
+  github_client,
+  jira_client,
+  oauth,
+} from "../utils/oauth";
+import {
+  BACKEND_GITHUB_URL,
+  BACKEND_JIRA_URL,
+  getIssues,
+} from "../utils/issues";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -28,31 +40,34 @@ const BoardImporter = () => {
     setCurrentPlatform(value);
   };
 
-  const { addProject, activeProjects} = useProject();
+  const { addProject, activeProjects } = useProject();
 
-
-  const adder = (addProjectl, receivedValue1l,receivedValue2l) => {
+  const adder = (addProjectl, receivedValue1l, receivedValue2l) => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
-      platform: currentPlatform, 
+      platform: currentPlatform,
       checked: false,
     });
   };
+
 
   const allowedProjectNames = ['ProjectA', 'ProjectB', 'ProjectC'];
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
 
+  let { jiraToken, githubToken } = useAuth();
+
+
   const handleClick = useCallback(() => {
     var pass = true;
-    const projectCategories = Object.keys(activeProjects);  
-    projectCategories.forEach(category => {
+    const projectCategories = Object.keys(activeProjects);
+    projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(project => {
-        if(receivedValue2 + receivedValue1 == project.name + project.owner){
-          pass = false
+      projectsInCategory.forEach((project) => {
+        if (receivedValue2 + receivedValue1 === project.name + project.owner) {
+          pass = false;
           setErrorMessage('Project is already added');
         }
       });
@@ -61,13 +76,57 @@ const BoardImporter = () => {
       pass = false
       setErrorMessage('Project does not exist');
     }
-    if(pass){
-      setErrorMessage("");
-      adder(addProject, receivedValue1,receivedValue2);
-    }  
-  }, [addProject, receivedValue1,receivedValue2]);
+    if (!pass) {
+      return;
+    }
+    setErrorMessage("");
+    adder(addProject, receivedValue1, receivedValue2);
 
+    switch (currentPlatform) {
+      case "Jira":
+        if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
+          oauth(SCOPE.jira, STATE.jira, jira_client);
+        }
 
+        getIssues(
+          BACKEND_JIRA_URL,
+          { projectKey: "KAN", name: "iwouldliketotestthis" },
+          jiraToken!,
+        ).then((resp) => console.log(resp));
+        break;
+
+      case "Github":
+        if (!githubToken) {
+          oauth(SCOPE.github, STATE.github, github_client);
+        }
+
+        getIssues(
+          BACKEND_GITHUB_URL,
+          {
+            repo: "kansync/kansync-server",
+            projectName: "KanSync Project Planner",
+          },
+          githubToken!,
+        ).then((resp) => console.log(resp));
+        break;
+
+      case "Trello":
+        break;
+
+      default:
+        break;
+    }
+  }, [
+    addProject,
+    currentPlatform,
+    receivedValue1,
+    receivedValue2,
+    jiraToken,
+    githubToken,
+    adder,
+    activeProjects,
+  ]);
+              
   const handleChange = (post) => {
     const projectCategories = Object.keys(activeProjects);  
     projectCategories.forEach(category => {
@@ -87,12 +146,7 @@ const BoardImporter = () => {
     projectCategories.forEach(category => {
       const projectsInCategory = activeProjects[category];
       projectsInCategory.forEach(project => {
-        console.log("_________");
-        console.log(post.name + post.owner);
-        console.log(",");
-        console.log(project.name + project.owner);
         if(post.name + post.owner == project.name + project.owner){
-          console.log(project.checked);
           isChecked = project.checked;
           return project.checked //for fast-nonpersistant version
          }
@@ -101,30 +155,6 @@ const BoardImporter = () => {
     //return isChecked; //for slow-persistant version
   };
   
- 
-
-  //const myCheckbox = ({onClick}
-  function Checkbox({ initialValue, onClick}) {
-    const [checked, setChecked] = React.useState(initialValue);
-  
-    const handleChangee = () => {
-      setChecked((state) => !state);
-    };
-  
-    return (
-      <label>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={handleChangee}
-          defaultChecked={checked}
-          onClick={onClick}
-        />
-      </label>
-    );
-  }
-  
-
 
   return (
     <div className="w-full flex flex-col place-items-center">   
@@ -133,23 +163,20 @@ const BoardImporter = () => {
       </p>
       <div className="w-full max-w-3xl px-8 py-16 bg-gradient-to-b from-accent to-primary rounded-sm shadow-inner">
         <Tab.Group>
-     
           <Tab.List className="flex space-x-3 rounded-xl bg-background/20 p-1 shadow-lg">
-
             {Object.keys(activeProjects).map((category) => (
-              <Tab 
-                key={category}   
+              <Tab
+                key={category}
                 onClick={() => handlePlatformChange(category)}
-                className={({ selected }) =>       
+                className={({ selected }) =>
                   classNames(
                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
                     "ring-background/60 ring-offset-2 ring-offset-accent focus:outline-none focus:ring-2",
-                    selected 
-                      ? "bg-background text-text shadow" 
+                    selected
+                      ? "bg-background text-text shadow"
                       : "text-secondary hover:bg-background/[0.12] hover:text-background",
                   )
                 }
-  
               >
                 {category}
               </Tab>
@@ -166,19 +193,19 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">                           
+                    <div className="flex flex-row items-center gap-8">                        
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "2"
+                        id="2"
                         onChildValueChange={handleChildValueChange1}
                       />
                       <DefaultInput
                         placeholder={currentPlatform}
-                        id = "1"
+                        id="1"
                         onChildValueChange={handleChildValueChange2}
                       />
-                      <JuicyButton onClick={handleClick} >
-                        <svg 
+                      <JuicyButton onClick={handleClick} className="bg-text">
+                        <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -197,25 +224,20 @@ const BoardImporter = () => {
                   </li>
                  
                   {posts.map((post) => (
-                    // {post.name}
                     <li
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
                     >
                       <h3 className="text-sm font-medium leading-5">
-                     
+                        {post.name}
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
-                        <li> <label><input type="checkbox" checked={getCurrent(post)} defaultChecked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
                         <li>{post.owner}</li>
                         <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
-                        <li>{post.platform}</li>  
-                        <li>&middot;</li>
-                        <li>{String(post.checked)}</li>          
-                        
+                        <li>{post.platform}</li>
                       </ul>
                     </li>
                   ))}
@@ -234,12 +256,9 @@ const BoardImporter = () => {
   );
   
 };
-  //<li> <label><input type="checkbox" checked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
-// <li> <label><Checkbox initialValue={() => {getCurrent(post)}} onClick={() => {handleChange(post)}} /></label></li>  
+
 const Dashboard = () => {
   const activeProjects = useProject().activeProjects;
-
-//JuicyButton onclick creates list with only selected boards?
 
   return (
     <>
@@ -249,7 +268,9 @@ const Dashboard = () => {
           activeProjects.Jira.length > 0 ||
           activeProjects.Trello.length > 0) && (
           <Link to="/kanban/overview" className="flex place-content-center">
-            <JuicyButton>Continue with selected boards</JuicyButton>
+            <JuicyButton className="bg-text px-8">
+              Continue with selected boards
+            </JuicyButton>
           </Link>
         )}
         <BoardImporter />

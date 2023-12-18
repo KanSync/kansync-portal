@@ -5,7 +5,6 @@ interface IProject {
   name: string;
   owner: string;
   platform: string;
-  checked: boolean;
 }
 
 interface IProjectProvider {
