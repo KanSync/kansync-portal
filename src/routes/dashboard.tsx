@@ -13,31 +13,21 @@ import {
   github_client,
   jira_client,
   oauth,
+  trello_redirect,
 } from "../utils/oauth";
 import {
   BACKEND_GITHUB_URL,
   BACKEND_JIRA_URL,
+  BACKEND_TRELLO_URL,
   getIssues,
 } from "../utils/issues";
-
-const url = new URLSearchParams({
-
-  boardId: "CLn3TTDH",
-});
-
-// const BACKEND_TRELLO_OAUTH_URL1 =
-//   "https://local.functions.nhost.run/v1/trello/oauth";
-
-const BACKEND_TRELLO_OAUTH_URL =
-  "https://local.functions.nhost.run/v1/trello/?" + url;
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
-export async function oauth_trello() {
-  window.location.href = BACKEND_TRELLO_OAUTH_URL;
-}
-
+// export async function oauth_trello() {
+//   window.location.href = BACKEND_TRELLO_OAUTH_URL;
+// }
 
 const BoardImporter = () => {
   const [receivedValue2, setReceivedValue2] = useState<string>("");
@@ -69,9 +59,9 @@ const BoardImporter = () => {
     });
   };
 
-  let { jiraToken, githubToken } = useAuth();
+  let { jiraToken, githubToken, trelloToken } = useAuth();
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     var pass = true;
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
@@ -92,7 +82,7 @@ const BoardImporter = () => {
     switch (currentPlatform) {
       case "Jira":
         if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
-          oauth(SCOPE.jira, STATE.jira, jira_client);
+          await oauth(SCOPE.jira, STATE.jira, jira_client);
         }
 
         getIssues(
@@ -104,7 +94,7 @@ const BoardImporter = () => {
 
       case "Github":
         if (!githubToken) {
-          oauth(SCOPE.github, STATE.github, github_client);
+          await oauth(SCOPE.github, STATE.github, github_client);
         }
 
         getIssues(
@@ -118,7 +108,17 @@ const BoardImporter = () => {
         break;
 
       case "Trello":
-        oauth_trello();
+        if (!trelloToken) {
+          await trello_redirect();
+        }
+
+        getIssues(
+          BACKEND_TRELLO_URL,
+          {
+            boardId: "5Mvk8PYn",
+          },
+          trelloToken!,
+        ).then((resp) => console.log(resp));
         break;
 
       default:
@@ -131,6 +131,7 @@ const BoardImporter = () => {
     receivedValue2,
     jiraToken,
     githubToken,
+    trelloToken,
     adder,
     activeProjects,
   ]);
