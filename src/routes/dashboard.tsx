@@ -20,6 +20,10 @@ import {
   getIssues,
 } from "../utils/issues";
 
+const url = new URLSearchParams({
+
+  boardId: "CLn3TTDH",
+});
 
 // const BACKEND_TRELLO_OAUTH_URL1 =
 //   "https://local.functions.nhost.run/v1/trello/oauth";
@@ -30,6 +34,10 @@ const BACKEND_TRELLO_OAUTH_URL =
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+export async function oauth_trello() {
+  window.location.href = BACKEND_TRELLO_OAUTH_URL;
+}
+
 
 const BoardImporter = () => {
   const [receivedValue2, setReceivedValue2] = useState<string>("");
