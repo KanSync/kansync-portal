@@ -1,15 +1,26 @@
 import { OAuth2Client, OAuth2Token } from '@badgateway/oauth2-client';
 
 type Code = string;
+type OAuth1 = { token: string, tokenSecret: string, verifier: string };
 
 const REDIRECT_URI: string = import.meta.env.VITE_REDIRECT_URI;
 const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL;
-const JIRA_TOKEN_URL = BACKEND_URL + "/jira/auth/token";
-const GITHUB_TOKEN_URL = BACKEND_URL + "/github/auth/token";
+const APP_NAME: string = import.meta.env.VITE_APP_NAME;
+
+const TOKEN_URL = {
+    jira: BACKEND_URL + "/jira/auth/token",
+    github: BACKEND_URL + "/github/auth/token",
+    trello: BACKEND_URL + "/trello/auth/token"
+}
+
 export const SCOPE = {
     jira: ['read:jira-work', 'read:jira-user'],
-    github: ['repo', 'read:project', 'read:org']
+    github: ['repo', 'read:project', 'read:org'],
+    trello: ['read', 'write', 'account'],
 }
+
+const AUTHORIZE_URL = "https://trello.com/1/OAuthAuthorizeToken";
+const EXPIRATION = "never";
 
 // TODO: Hash of the users session ID, works for now but unsafe
 export const STATE = {
@@ -54,9 +65,15 @@ export async function oauth(scope: string[], state: string, client: OAuth2Client
 export async function validate_oauth_origin(
     url: string | URL,
     setJira: (newToken: OAuth2Token) => void,
-    setGithub: (newToken: OAuth2Token) => void
+    setGithub: (newToken: OAuth2Token) => void,
+    setTrello: (newToken: OAuth2Token) => void
 ):
-    Promise<{ code: Code, backend_url: URL, setToken: (newToken: OAuth2Token) => void }> {
+    Promise<{
+        code?: Code,
+        oauth?: OAuth1,
+        backend_url: URL,
+        setToken: (newToken: OAuth2Token) => void
+    }> {
     const URLQueries = new URL(url).searchParams;
 
     if (URLQueries.has('error')) {
@@ -65,18 +82,30 @@ export async function validate_oauth_origin(
         );
     }
 
-    if (!URLQueries.has('code')) throw new Error(`The url did not contain a code parameter ${url}`);
-
     let backend_url: URL;
     let setToken: (newToken: OAuth2Token) => void;
 
+    if (URLQueries.has('oauth_token') && URLQueries.has('oauth_verifier')) {
+        backend_url = new URL(TOKEN_URL.trello);
+        setToken = setTrello;
+        let oauth = {
+            token: URLQueries.get('oauth_token')!,
+            tokenSecret: sessionStorage.getItem("tokenSecret")!,
+            verifier: URLQueries.get('oauth_verifier')!
+        }
+
+        return { oauth: oauth, backend_url: backend_url, setToken: setToken }
+    }
+
+    if (!URLQueries.has('code')) throw new Error(`The url did not contain a code parameter ${url}`);
+
     switch (URLQueries.get('state')) {
         case STATE.jira:
-            backend_url = new URL(JIRA_TOKEN_URL);
+            backend_url = new URL(TOKEN_URL.jira);
             setToken = setJira;
             break;
         case STATE.github:
-            backend_url = new URL(GITHUB_TOKEN_URL);
+            backend_url = new URL(TOKEN_URL.github);
             setToken = setGithub;
             break;
 
@@ -87,12 +116,52 @@ export async function validate_oauth_origin(
     return { code: URLQueries.get('code')!, backend_url: backend_url, setToken: setToken };
 }
 
-export async function get_token_from_backend(backend_url: URL, code: Code): Promise<OAuth2Token> {
-    let response = await fetch(backend_url + '?' + new URLSearchParams({ code: code }))
+export async function get_token_from_backend(backend_url: URL, code?: Code, oauth?: OAuth1): Promise<OAuth2Token> {
+    let response;
+
+    if (code) {
+        response = await fetch(backend_url + '?' + new URLSearchParams({ code: code }))
+    }
+
+    if (oauth) {
+        response = await fetch(backend_url, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(oauth)
+        })
+    }
+
+    if (response === undefined) {
+        throw new Error(`Failed getting token`);
+    }
 
     if (!response.ok) {
         throw new Error(`Failed getting token: ${response.status}`);
     }
 
     return response.json()
+}
+
+async function get_trello_request_token(): Promise<{ token: string, tokenSecret: string }> {
+    let response = await fetch(BACKEND_URL + "/trello/auth/oauth1")
+
+    return (await response.json());
+}
+
+export async function trello_redirect() {
+    let { token, tokenSecret } = await get_trello_request_token();
+
+    let params = new URLSearchParams({
+        scope: SCOPE.trello.join(","),
+        oauth_token: token,
+        name: APP_NAME,
+        expiration: EXPIRATION
+    });
+
+    sessionStorage.setItem("tokenSecret", tokenSecret);
+
+    window.location.replace(`${AUTHORIZE_URL}?${params}`);
 }

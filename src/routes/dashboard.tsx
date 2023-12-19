@@ -13,36 +13,45 @@ import {
   github_client,
   jira_client,
   oauth,
+  trello_redirect,
 } from "../utils/oauth";
 import {
   BACKEND_GITHUB_URL,
   BACKEND_JIRA_URL,
+  BACKEND_TRELLO_URL,
   getIssues,
 } from "../utils/issues";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+// export async function oauth_trello() {
+//   window.location.href = BACKEND_TRELLO_OAUTH_URL;
+// }
 
 const BoardImporter = () => {
+  const [receivedValue2, setReceivedValue2] = useState<string>("");
+  const handleChildValueChange = (value: string) => {
+    setReceivedValue2(value);
+  };
+
+  const [currentPlatform, setCurrentPlatform] = useState<string>("");
+  const handlePlatformChange = (value: string) => {
+    setCurrentPlatform(value);
+  };
   const [receivedValue1, setReceivedValue1] = useState<string>("");
   const handleChildValueChange1 = (value: string) => {
     setReceivedValue1(value);
   };
 
-  const [receivedValue2, setReceivedValue2] = useState<string>("");
-  const handleChildValueChange2 = (value: string) => {
-    setReceivedValue2(value);
-  };
-
-  const [currentPlatform, setCurrentPlatform] = useState<string>("Github");
-  const handlePlatformChange = (value: string) => {
-    setCurrentPlatform(value);
-  };
-
   const { addProject, activeProjects } = useProject();
 
-  const adder = (addProjectl, receivedValue1l, receivedValue2l) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const adder = (
+    addProjectl,
+    receivedValue1l: string,
+    receivedValue2l: any,
+  ) => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
@@ -52,41 +61,41 @@ const BoardImporter = () => {
     });
   };
 
+  let { jiraToken, githubToken, trelloToken } = useAuth();
 
-  const allowedProjectNames = ['ProjectA', 'ProjectB', 'ProjectC'];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const allowedProjectNames = ["ProjectA", "ProjectB", "ProjectC"];
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-
-  let { jiraToken, githubToken } = useAuth();
-
-
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     var pass = true;
     const projectCategories = Object.keys(activeProjects);
     projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project) => {
+      projectsInCategory.forEach((project: { name: any; owner: any }) => {
         if (receivedValue2 + receivedValue1 === project.name + project.owner) {
           pass = false;
-          setErrorMessage('Project is already added');
+          setErrorMessage("Project is already added");
         }
       });
     });
-    if(!allowedProjectNames.includes(receivedValue2)){  //TODO: change to if not recive error (not found in backend) when calling (also save data in this stage?)
-      pass = false
-      setErrorMessage('Project does not exist');
+    if (!allowedProjectNames.includes(receivedValue2)) {
+      //TODO: change to if not recive error (not found in backend) when calling (also save data in this stage?)
+      pass = false;
+      setErrorMessage("Project does not exist");
     }
-    if (!pass) {
-      return;
-    }
+    // TODO: Add this later when error checking is complete 
+    // if (!pass) {
+    //   return;
+    // }
     setErrorMessage("");
     adder(addProject, receivedValue1, receivedValue2);
 
     switch (currentPlatform) {
       case "Jira":
         if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
-          oauth(SCOPE.jira, STATE.jira, jira_client);
+          await oauth(SCOPE.jira, STATE.jira, jira_client);
         }
 
         getIssues(
@@ -98,7 +107,7 @@ const BoardImporter = () => {
 
       case "Github":
         if (!githubToken) {
-          oauth(SCOPE.github, STATE.github, github_client);
+          await oauth(SCOPE.github, STATE.github, github_client);
         }
 
         getIssues(
@@ -112,50 +121,65 @@ const BoardImporter = () => {
         break;
 
       case "Trello":
+        if (!trelloToken) {
+          await trello_redirect();
+        }
+
+        getIssues(
+          BACKEND_TRELLO_URL,
+          {
+            boardId: "5Mvk8PYn",
+          },
+          trelloToken!,
+        ).then((resp) => console.log(resp));
         break;
 
       default:
         break;
     }
   }, [
-    addProject,
-    currentPlatform,
-    receivedValue1,
+    activeProjects,
+    allowedProjectNames,
     receivedValue2,
+    adder,
+    addProject,
+    receivedValue1,
+    currentPlatform,
     jiraToken,
     githubToken,
-    adder,
-    activeProjects,
+    trelloToken,
   ]);
-              
-  const handleChange = (post) => {
-    const projectCategories = Object.keys(activeProjects);  
-    projectCategories.forEach(category => {
+
+  const handleChange = (post: { name: any; owner: any }) => {
+    const projectCategories = Object.keys(activeProjects);
+    projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(project => {
-        if(post.name + post.owner == project.name + project.owner){
-          project.checked = !project.checked;
-         }
-      });
+      projectsInCategory.forEach(
+        (project: { name: any; owner: any; checked: boolean }) => {
+          if (post.name + post.owner === project.name + project.owner) {
+            project.checked = !project.checked;
+          }
+        },
+      );
     });
   };
 
-  
-  const getCurrent = (post) => {
+  const getCurrent = (post: { name: any; owner: any }) => {
     let isChecked = false;
-    const projectCategories = Object.keys(activeProjects);  
-    projectCategories.forEach(category => {
+    const projectCategories = Object.keys(activeProjects);
+    projectCategories.forEach((category) => {
       const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(project => {
-        if(post.name + post.owner == project.name + project.owner){
-          isChecked = project.checked;
-          return project.checked //for fast-nonpersistant version
-         }
-      });
+      projectsInCategory.forEach(
+        (project: { name: any; owner: any; checked: boolean }) => {
+          if (post.name + post.owner === project.name + project.owner) {
+            isChecked = project.checked;
+            return project.checked; //for fast-nonpersistant version
+          }
+        },
+      );
     });
     //return isChecked; //for slow-persistant version
   };
-  
 
   const handleUpdate = (post) => {
     const currentDate = new Date();
@@ -171,7 +195,7 @@ const BoardImporter = () => {
   }
               
   return (
-    <div className="w-full flex flex-col place-items-center">   
+    <div className="w-full flex flex-col place-items-center">
       <p className="text-text text-xl pb-4 self-center">
         Import your boards from:
       </p>
@@ -207,7 +231,7 @@ const BoardImporter = () => {
               >
                 <ul>
                   <li className="relative rounded-md p-3">
-                    <div className="flex flex-row items-center gap-8">                        
+                    <div className="flex flex-row items-center gap-8">
                       <DefaultInput
                         placeholder={currentPlatform}
                         id="2"
@@ -216,7 +240,7 @@ const BoardImporter = () => {
                       <DefaultInput
                         placeholder={currentPlatform}
                         id="1"
-                        onChildValueChange={handleChildValueChange2}
+                        onChildValueChange={handleChildValueChange}
                       />
                       <JuicyButton onClick={handleClick} className="bg-text">
                         <svg
@@ -236,7 +260,7 @@ const BoardImporter = () => {
                       </JuicyButton>
                     </div>
                   </li>
-                 
+
                   {posts.map((post) => (
                     <li
                       key={post.name}
@@ -271,21 +295,17 @@ const BoardImporter = () => {
 
                     </li>
                   ))}
-
-                </ul>                
-              </Tab.Panel>             
+                </ul>
+              </Tab.Panel>
             ))}
-          </Tab.Panels>        
-        </Tab.Group>     
+          </Tab.Panels>
+        </Tab.Group>
       </div>
       {errorMessage && (
-           <p className="text-text text-xl pb-4 self-center">
-        {errorMessage}</p>
+        <p className="text-text text-xl pb-4 self-center">{errorMessage}</p>
       )}
     </div>
-    
   );
-  
 };
 
 const Dashboard = () => {
@@ -304,6 +324,7 @@ const Dashboard = () => {
             </JuicyButton>
           </Link>
         )}
+        {/* add trello component */}
         <BoardImporter />
       </div>
     </>
