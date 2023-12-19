@@ -55,7 +55,8 @@ const BoardImporter = () => {
     addProjectl({
       name: receivedValue2l,
       owner: receivedValue1l,
-      platform: currentPlatform,
+      platform: currentPlatform, 
+      lastUpdate: new Date(),
       checked: false,
     });
   };
@@ -180,6 +181,19 @@ const BoardImporter = () => {
     //return isChecked; //for slow-persistant version
   };
 
+  const handleUpdate = (post) => {
+    const currentDate = new Date();
+    post.lastUpdate = currentDate;
+    //updata data with data from new request
+  };
+
+  const lastUpdateInDays = (post) => {
+    const currentDate = new Date();
+    const differenceInTime = currentDate.getTime() - post.lastUpdate.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return Math.floor(differenceInDays);
+  }
+              
   return (
     <div className="w-full flex flex-col place-items-center">
       <p className="text-text text-xl pb-4 self-center">
@@ -252,15 +266,33 @@ const BoardImporter = () => {
                       key={post.name}
                       className="relative rounded-md p-3 hover:bg-secondary"
                     >
+                      <div className="flex justify-between items-center">
+                      <div>
                       <h3 className="text-sm font-medium leading-5">
                         {post.name}
                       </h3>
 
                       <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                      <li> <label><input type="checkbox" checked={getCurrent(post)} defaultChecked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
+                        <li>{post.owner}</li>
+                        <li>&middot;</li>
                         <li>{post.name}</li>
                         <li>&middot;</li>
-                        <li>{post.platform}</li>
-                      </ul>
+                        <li>{post.platform}</li>  
+
+                        </ul>
+                        
+                        </div>
+                        <span className="text-xs text-gray-400">{`Updated ${lastUpdateInDays(post)} days ago`}</span>
+                        <button
+                          onClick={() => handleUpdate(post)}
+                          className= "text-background p-4 rounded-full hover:bg-text/80 shadow-lg transform hover:scale-110 transition duration-300 ease-in-out active:scale-75 bg-text">
+                          Update                  
+                      
+                        </button>
+                        </div>
+                      
+
                     </li>
                   ))}
                 </ul>
