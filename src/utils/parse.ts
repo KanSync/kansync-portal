@@ -11,7 +11,6 @@ function toUnified(issue: any): IUnifiedIssue {
     createdAt: new Date(issue.createdAt),
     comments: issue.comments,
     lastEditedAt: new Date(issue.lastEditedAt),
-    projectID: issue.projectID,
     dueDate: issue.dueDate ? new Date(issue.dueDate) : undefined,
     labels: issue.labels,
   };
