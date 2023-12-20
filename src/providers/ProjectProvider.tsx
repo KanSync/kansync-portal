@@ -37,7 +37,7 @@ function saveProject(platform: string, project: IProject): void {
     localStorage.getItem(platform + "Projects") || "[]",
   );
   projects.push(project);
-  localStorage.setItem(platform, JSON.stringify(projects));
+  localStorage.setItem(platform + "Projects", JSON.stringify(projects));
 }
 
 function loadProjects(platform: string): IProject[] {
