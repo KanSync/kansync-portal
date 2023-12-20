@@ -223,7 +223,7 @@ const BoardImporter = () => {
                         id="1"
                         onChildValueChange={handleChildValueChange}
                       />
-                      <JuicyButton onClick={handleClick} className="bg-text">
+                      <JuicyButton onClick={handleClick} className="bg-text importButton">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
