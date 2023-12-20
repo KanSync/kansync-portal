@@ -1,9 +1,8 @@
 import { Tab } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import Header from "../header";
-import { useProject } from "../providers/ProjectProvider";
+import { IProject, useProject } from "../providers/ProjectProvider";
 import { useAuth } from "../providers/AuthProvider";
-
 import { useCallback, useState } from "react";
 import { DefaultInput } from "../DefaultInput";
 import JuicyButton from "../juicybutton";
@@ -21,13 +20,11 @@ import {
   BACKEND_TRELLO_URL,
   getIssues,
 } from "../utils/issues";
+import { IUnifiedIssue } from "../interfaces/issues";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
-// export async function oauth_trello() {
-//   window.location.href = BACKEND_TRELLO_OAUTH_URL;
-// }
 
 const BoardImporter = () => {
   const [receivedValue2, setReceivedValue2] = useState<string>("");
@@ -35,7 +32,7 @@ const BoardImporter = () => {
     setReceivedValue2(value);
   };
 
-  const [currentPlatform, setCurrentPlatform] = useState<string>("");
+  const [currentPlatform, setCurrentPlatform] = useState<string>("Github");
   const handlePlatformChange = (value: string) => {
     setCurrentPlatform(value);
   };
@@ -48,49 +45,39 @@ const BoardImporter = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const adder = (
-    addProjectl,
-    receivedValue1l: string,
-    receivedValue2l: any,
+    addProject: (project: IProject) => void,
+    receivedValue1: string,
+    receivedValue2: any,
+    issues: IUnifiedIssue[],
   ) => {
-    addProjectl({
-      name: receivedValue2l,
-      owner: receivedValue1l,
-      platform: currentPlatform, 
+    addProject({
+      name: receivedValue2,
+      owner: receivedValue1,
+      platform: currentPlatform,
       lastUpdate: new Date(),
       checked: false,
+      issues: issues,
     });
   };
 
   let { jiraToken, githubToken, trelloToken } = useAuth();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const allowedProjectNames = ["ProjectA", "ProjectB", "ProjectC"];
-
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleClick = useCallback(async () => {
-    var pass = true;
-    const projectCategories = Object.keys(activeProjects);
-    projectCategories.forEach((category) => {
-      const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach((project: { name: any; owner: any }) => {
-        if (receivedValue2 + receivedValue1 === project.name + project.owner) {
-          pass = false;
-          setErrorMessage("Project is already added");
-        }
-      });
+    let projectExists = false;
+    activeProjects[currentPlatform].forEach((project: IProject) => {
+      if (receivedValue1 === project.owner && receivedValue2 === project.name) {
+        setErrorMessage("Project is already added");
+        projectExists = true;
+      }
     });
-    if (!allowedProjectNames.includes(receivedValue2)) {
-      //TODO: change to if not recive error (not found in backend) when calling (also save data in this stage?)
-      pass = false;
-      setErrorMessage("Project does not exist");
+
+    if (projectExists) {
+      return;
     }
-    // TODO: Add this later when error checking is complete 
-    // if (!pass) {
-    //   return;
-    // }
-    setErrorMessage("");
-    adder(addProject, receivedValue1, receivedValue2);
+
+    let result: IUnifiedIssue[] | undefined;
 
     switch (currentPlatform) {
       case "Jira":
@@ -98,11 +85,11 @@ const BoardImporter = () => {
           await oauth(SCOPE.jira, STATE.jira, jira_client);
         }
 
-        getIssues(
+        result = await getIssues(
           BACKEND_JIRA_URL,
-          { projectKey: "KAN", name: "iwouldliketotestthis" },
+          { projectKey: receivedValue1, name: receivedValue2 },
           jiraToken!,
-        ).then((resp) => console.log(resp));
+        );
         break;
 
       case "Github":
@@ -110,14 +97,14 @@ const BoardImporter = () => {
           await oauth(SCOPE.github, STATE.github, github_client);
         }
 
-        getIssues(
+        result = await getIssues(
           BACKEND_GITHUB_URL,
           {
-            repo: "kansync/kansync-server",
-            projectName: "KanSync Project Planner",
+            repo: receivedValue1,
+            projectName: receivedValue2,
           },
           githubToken!,
-        ).then((resp) => console.log(resp));
+        );
         break;
 
       case "Trello":
@@ -125,21 +112,28 @@ const BoardImporter = () => {
           await trello_redirect();
         }
 
-        getIssues(
+        result = await getIssues(
           BACKEND_TRELLO_URL,
           {
-            boardId: "5Mvk8PYn",
+            boardId: receivedValue2,
           },
           trelloToken!,
-        ).then((resp) => console.log(resp));
+        );
         break;
 
       default:
         break;
     }
+
+    if (result === undefined) {
+      setErrorMessage("Project does not exist");
+      return;
+    }
+
+    setErrorMessage("");
+    adder(addProject, receivedValue1, receivedValue2, result);
   }, [
     activeProjects,
-    allowedProjectNames,
     receivedValue2,
     adder,
     addProject,
@@ -150,50 +144,37 @@ const BoardImporter = () => {
     trelloToken,
   ]);
 
-  const handleChange = (post: { name: any; owner: any }) => {
-    const projectCategories = Object.keys(activeProjects);
-    projectCategories.forEach((category) => {
-      const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(
-        (project: { name: any; owner: any; checked: boolean }) => {
-          if (post.name + post.owner === project.name + project.owner) {
-            project.checked = !project.checked;
-          }
-        },
-      );
+  const handleChange = (post: IProject) => {
+    activeProjects[currentPlatform].forEach((project: IProject) => {
+      if (post.name + post.owner === project.name + project.owner) {
+        project.checked = !project.checked;
+      }
     });
   };
 
-  const getCurrent = (post: { name: any; owner: any }) => {
+  const getCurrent = (post: IProject) => {
     let isChecked = false;
-    const projectCategories = Object.keys(activeProjects);
-    projectCategories.forEach((category) => {
-      const projectsInCategory = activeProjects[category];
-      projectsInCategory.forEach(
-        (project: { name: any; owner: any; checked: boolean }) => {
-          if (post.name + post.owner === project.name + project.owner) {
-            isChecked = project.checked;
-            return project.checked; //for fast-nonpersistant version
-          }
-        },
-      );
+    activeProjects[currentPlatform].forEach((project: IProject) => {
+      if (post.name + post.owner === project.name + project.owner) {
+        isChecked = project.checked;
+      }
     });
-    //return isChecked; //for slow-persistant version
+    return isChecked;
   };
 
-  const handleUpdate = (post) => {
+  const handleUpdate = (post: IProject) => {
     const currentDate = new Date();
     post.lastUpdate = currentDate;
     //updata data with data from new request
   };
 
-  const lastUpdateInDays = (post) => {
+  const lastUpdateInDays = (post: IProject) => {
     const currentDate = new Date();
     const differenceInTime = currentDate.getTime() - post.lastUpdate.getTime();
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     return Math.floor(differenceInDays);
-  }
-              
+  };
+
   return (
     <div className="w-full flex flex-col place-items-center">
       <p className="text-text text-xl pb-4 self-center">
@@ -267,32 +248,41 @@ const BoardImporter = () => {
                       className="relative rounded-md p-3 hover:bg-secondary"
                     >
                       <div className="flex justify-between items-center">
-                      <div>
-                      <h3 className="text-sm font-medium leading-5">
-                        {post.name}
-                      </h3>
+                        <div>
+                          <h3 className="text-sm font-medium leading-5">
+                            {post.name}
+                          </h3>
 
-                      <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
-                      <li> <label><input type="checkbox" checked={getCurrent(post)} defaultChecked={getCurrent(post)} onClick={() => {handleChange(post)}}></input></label></li>
-                        <li>{post.owner}</li>
-                        <li>&middot;</li>
-                        <li>{post.name}</li>
-                        <li>&middot;</li>
-                        <li>{post.platform}</li>  
-
-                        </ul>
-                        
+                          <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500">
+                            <li>
+                              {" "}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  defaultChecked={getCurrent(post)}
+                                  onChange={() => {
+                                    handleChange(post);
+                                  }}
+                                ></input>
+                              </label>
+                            </li>
+                            <li>{post.owner}</li>
+                            <li>&middot;</li>
+                            <li>{post.name}</li>
+                            <li>&middot;</li>
+                            <li>{post.platform}</li>
+                          </ul>
                         </div>
-                        <span className="text-xs text-gray-400">{`Updated ${lastUpdateInDays(post)} days ago`}</span>
+                        <span className="text-xs text-gray-400">{`Updated ${lastUpdateInDays(
+                          post,
+                        )} days ago`}</span>
                         <button
                           onClick={() => handleUpdate(post)}
-                          className= "text-background p-4 rounded-full hover:bg-text/80 shadow-lg transform hover:scale-110 transition duration-300 ease-in-out active:scale-75 bg-text">
-                          Update                  
-                      
+                          className="text-background p-4 rounded-full hover:bg-text/80 shadow-lg transform hover:scale-110 transition duration-300 ease-in-out active:scale-75 bg-text"
+                        >
+                          Update
                         </button>
-                        </div>
-                      
-
+                      </div>
                     </li>
                   ))}
                 </ul>

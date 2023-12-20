@@ -17,12 +17,16 @@ function toUnified(issue: any): IUnifiedIssue {
   return unifiedIssue;
 }
 
-export default function conv_to_unified(response: IIssueResponse): {
+export function conv_to_unified(issues: any[]): IUnifiedIssue[] {
+  return issues.map((issue) => toUnified(issue))
+}
+
+export default function conv_response_to_unified(response: IIssueResponse): {
   num: number;
   issues: IUnifiedIssue[];
 } {
   return {
     num: response.num,
-    issues: response.issues.map((issue) => toUnified(issue)),
+    issues: conv_to_unified(response.issues),
   };
 }
