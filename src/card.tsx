@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import PlusCircle from "./assets/plus-circle.svg";
 import { useProject } from "./providers/ProjectProvider";
-import DisplayCard from "./DisplayCard";
 import { DefaultInput } from "./DefaultInput";
 
 const AddCard = ({ title }: { title: string }) => {
@@ -14,9 +13,10 @@ const AddCard = ({ title }: { title: string }) => {
   const addProject = useProject().addProject;
 
   const handleClick = useCallback(() => {
-    addProject({
+    return addProject({
       name: receivedValue,
       platform: title,
+      owner: "",
     });
   }, [addProject, receivedValue, title]);
 
@@ -26,6 +26,7 @@ const AddCard = ({ title }: { title: string }) => {
         <DefaultInput
           placeholder="Enter name of repository"
           onChildValueChange={handleChildValueChange}
+          id={""}
         />
         <button className="hover:bg-accent" onClick={handleClick}>
           <img src={PlusCircle} className="w-16" alt="" />
@@ -55,7 +56,6 @@ const Card = ({ title }: { title: string }) => {
         </div>
       </div>
       {isAddNewProjectCardVisible && <AddCard title={title} />}
-    
     </div>
   );
 };

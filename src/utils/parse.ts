@@ -11,19 +11,22 @@ function toUnified(issue: any): IUnifiedIssue {
     createdAt: new Date(issue.createdAt),
     comments: issue.comments,
     lastEditedAt: new Date(issue.lastEditedAt),
-    projectID: issue.projectID,
     dueDate: issue.dueDate ? new Date(issue.dueDate) : undefined,
     labels: issue.labels,
   };
   return unifiedIssue;
 }
 
-export default function conv_to_unified(response: IIssueResponse): {
+export function conv_to_unified(issues: any[]): IUnifiedIssue[] {
+  return issues.map((issue) => toUnified(issue))
+}
+
+export default function conv_response_to_unified(response: IIssueResponse): {
   num: number;
   issues: IUnifiedIssue[];
 } {
   return {
     num: response.num,
-    issues: response.issues.map((issue) => toUnified(issue)),
+    issues: conv_to_unified(response.issues),
   };
 }

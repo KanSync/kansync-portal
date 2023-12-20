@@ -1,4 +1,6 @@
 import { OAuth2Token } from "@badgateway/oauth2-client";
+import { IUnifiedIssue } from "../interfaces/issues";
+import conv_response_to_unified from "./parse";
 
 const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL;
 export const BACKEND_JIRA_URL = new URL(BACKEND_URL + "/jira/");
@@ -23,7 +25,7 @@ export async function getIssues(
     backend_url: URL,
     params: JiraParams | GithubParams | TrelloParams,
     oAuthToken: OAuth2Token,
-) {
+): Promise<IUnifiedIssue[] | undefined> {
     const result = await fetch(
         backend_url +
         "?" +
@@ -36,5 +38,9 @@ export async function getIssues(
         },
     );
 
-    return await result.json();
+    if (!result.ok) {
+        return undefined;
+    }
+
+    return conv_response_to_unified(await result.json()).issues;
 }

@@ -12,7 +12,6 @@ export interface IUnifiedIssue {
   createdAt: Date;
   comments: string[];
   lastEditedAt: Date;
-  projectID: number | string;
   dueDate?: Date;
   labels: string[];
   dependencies?: IUnifiedIssue[];
@@ -20,5 +19,5 @@ export interface IUnifiedIssue {
 
 export interface IIssueResponse {
   num: number;
-  issues: IUnifiedIssue[];
+  issues: IUnifiedIssue[] | any[];
 }

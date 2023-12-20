@@ -1,17 +1,20 @@
 import React from "react";
 import { useContext, useState } from "react";
+import { IUnifiedIssue } from "../interfaces/issues";
+import { conv_to_unified } from "../utils/parse";
 
-interface IProject {
+export interface IProject {
   name: string;
   owner: string;
   platform: string;
-  currentDate: Date;
+  lastUpdate: Date;
   checked: boolean;
+  issues: IUnifiedIssue[];
 }
 
 interface IProjectProvider {
   activeProjects: {
-    Github: IProject[];
+    [Github: string]: IProject[];
     Jira: IProject[];
     Trello: IProject[];
   };
@@ -29,18 +32,37 @@ const ProjectProviderContext = React.createContext<IProjectProvider>({
   },
 });
 
+function saveProject(platform: string, project: IProject): void {
+  let projects: IProject[] = JSON.parse(
+    localStorage.getItem(platform + "Projects") || "[]",
+  );
+  projects.push(project);
+  localStorage.setItem(platform + "Projects", JSON.stringify(projects));
+}
+
+function loadProjects(platform: string): IProject[] {
+  return JSON.parse(localStorage.getItem(platform + "Projects") || "[]").map(
+    (project: IProject) => {
+      project.lastUpdate = new Date(project.lastUpdate);
+      project.issues = conv_to_unified(project.issues);
+      return project;
+    },
+  );
+}
+
 const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeProjects, setActiveProjects] = useState<{
     Github: IProject[];
     Jira: IProject[];
     Trello: IProject[];
   }>({
-    Github: [],
-    Jira: [],
-    Trello: [],
+    Github: loadProjects("Github"),
+    Jira: loadProjects("Jira"),
+    Trello: loadProjects("Trello"),
   });
 
   const addProject = (project: IProject) => {
+    saveProject(project.platform, project);
     switch (project.platform) {
       case "Github":
         return setActiveProjects({
