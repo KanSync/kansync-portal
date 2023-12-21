@@ -62,6 +62,12 @@ const BoardImporter = () => {
     });
   };
 
+  let { jiraToken, githubToken, trelloToken } = useAuth();
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const { user } = useUser();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleImport = async (
     platform: string,
@@ -122,12 +128,6 @@ const BoardImporter = () => {
 
     return result;
   };
-
-  let { jiraToken, githubToken, trelloToken } = useAuth();
-
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const { user } = useUser();
 
   const handleClick = useCallback(async () => {
     let projectExists = false;
@@ -209,7 +209,7 @@ const BoardImporter = () => {
     }
 
     setErrorMessage("");
-    adder(addProject, receivedValue1, receivedValue2, result);
+    adder(addProject, post.owner, post.name, result);
   };
 
   const lastUpdateInDays = (post: IProject) => {

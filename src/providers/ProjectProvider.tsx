@@ -62,13 +62,13 @@ const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
     //   ({ name, owner }) => name === project.name && owner === project.owner,
     // );
 
-    let index = activeProjects[project.platform].findIndex(
-      ({ name, owner }) => name === project.name && owner === project.owner,
+    let all_projects = activeProjects;
+    let index = all_projects[project.platform].findIndex(
+      (old_project: IProject) => old_project.name === project.name && old_project.owner === project.owner,
     );
-
     if (index !== -1) {
-      activeProjects[project.platform][index].lastUpdate = project.lastUpdate;
-      activeProjects[project.platform][index].issues = project.issues;
+      all_projects[project.platform][index] = project;
+      setActiveProjects(all_projects);
       saveProject(project.platform, activeProjects[project.platform]);
       return;
     }
