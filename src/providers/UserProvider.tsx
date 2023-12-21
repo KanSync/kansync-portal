@@ -17,13 +17,18 @@ const UserProviderContext = React.createContext<IUserProvider>({
   },
 });
 
+let local_user = localStorage.getItem("user");
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<IUser>({});
+  const [user, setUser] = useState<IUser>(
+    local_user ? JSON.parse(local_user) : {},
+  );
 
   const setNickname = (nickname: string) => {
     setUser({
       nickname: nickname,
     });
+
+    localStorage.setItem("user", JSON.stringify({ nickname: nickname }));
   };
 
   return (
