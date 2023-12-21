@@ -7,17 +7,23 @@ export const BACKEND_JIRA_URL = new URL(BACKEND_URL + "/jira/");
 export const BACKEND_GITHUB_URL = new URL(BACKEND_URL + "/github/");
 export const BACKEND_TRELLO_URL = new URL(BACKEND_URL + "/trello/");
 
-type JiraParams = {
+export type BaseParams = {
+    user?: string,
+    update?: `${boolean}`,
+    project_name?: string,
+}
+
+type JiraParams = BaseParams & {
     projectKey: string,
     name: string
 }
 
-type GithubParams = {
+type GithubParams = BaseParams & {
     repo: string,
     projectName: string
 }
 
-type TrelloParams = {
+type TrelloParams = BaseParams & {
     boardId: string,
 }
 
