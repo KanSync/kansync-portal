@@ -2,7 +2,7 @@ import React from "react";
 import { useContext, useState } from "react";
 
 interface IUser {
-  nickname: string;
+  nickname?: string;
 }
 
 interface IUserProvider {
@@ -11,18 +11,14 @@ interface IUserProvider {
 }
 
 const UserProviderContext = React.createContext<IUserProvider>({
-  user: {
-    nickname: "Guest",
-  },
+  user: {},
   setNickname: () => {
     throw new Error(`[UserProvider] setNickname() not implemented`);
   },
 });
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<IUser>({
-    nickname: "Guest",
-  });
+  const [user, setUser] = useState<IUser>({});
 
   const setNickname = (nickname: string) => {
     setUser({

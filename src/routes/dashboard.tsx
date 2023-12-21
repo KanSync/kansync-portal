@@ -18,9 +18,11 @@ import {
   BACKEND_GITHUB_URL,
   BACKEND_JIRA_URL,
   BACKEND_TRELLO_URL,
+  BaseParams,
   getIssues,
 } from "../utils/issues";
 import { IUnifiedIssue } from "../interfaces/issues";
+import { useUser } from "../providers/UserProvider";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -64,6 +66,8 @@ const BoardImporter = () => {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  const { user } = useUser();
+
   const handleClick = useCallback(async () => {
     let projectExists = false;
     activeProjects[currentPlatform].forEach((project: IProject) => {
@@ -78,6 +82,10 @@ const BoardImporter = () => {
     }
 
     let result: IUnifiedIssue[] | undefined;
+    let baseParams: BaseParams = {
+      ...{ project_name: receivedValue1 + receivedValue2 },
+      ...(Object.keys(user).length === 0 ? {} : { user: user.nickname }),
+    };
 
     switch (currentPlatform) {
       case "Jira":
@@ -87,7 +95,10 @@ const BoardImporter = () => {
 
         result = await getIssues(
           BACKEND_JIRA_URL,
-          { projectKey: receivedValue1, name: receivedValue2 },
+          Object.assign(baseParams, {
+            projectKey: receivedValue1,
+            name: receivedValue2,
+          }),
           jiraToken!,
         );
         break;
@@ -99,10 +110,10 @@ const BoardImporter = () => {
 
         result = await getIssues(
           BACKEND_GITHUB_URL,
-          {
+          Object.assign(baseParams, {
             repo: receivedValue1,
             projectName: receivedValue2,
-          },
+          }),
           githubToken!,
         );
         break;
@@ -114,9 +125,9 @@ const BoardImporter = () => {
 
         result = await getIssues(
           BACKEND_TRELLO_URL,
-          {
+          Object.assign(baseParams, {
             boardId: receivedValue2,
-          },
+          }),
           trelloToken!,
         );
         break;
@@ -142,6 +153,7 @@ const BoardImporter = () => {
     jiraToken,
     githubToken,
     trelloToken,
+    user,
   ]);
 
   const handleChange = (post: IProject) => {
