@@ -108,7 +108,7 @@ const Header = () => {
                         onInput={handleInput}
                       />
 
-                      <JuicyButton onClick={handleLogin} className="bg-text">
+                      <JuicyButton onClick={handleLogin} className="bg-text loginButton">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
