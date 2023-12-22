@@ -32,11 +32,7 @@ const ProjectProviderContext = React.createContext<IProjectProvider>({
   },
 });
 
-function saveProject(platform: string, project: IProject): void {
-  let projects: IProject[] = JSON.parse(
-    localStorage.getItem(platform + "Projects") || "[]",
-  );
-  projects.push(project);
+function saveProject(platform: string, projects: IProject[]): void {
   localStorage.setItem(platform + "Projects", JSON.stringify(projects));
 }
 
@@ -52,7 +48,7 @@ function loadProjects(platform: string): IProject[] {
 
 const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeProjects, setActiveProjects] = useState<{
-    Github: IProject[];
+    [Github: string]: IProject[];
     Jira: IProject[];
     Trello: IProject[];
   }>({
@@ -62,7 +58,21 @@ const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const addProject = (project: IProject) => {
-    saveProject(project.platform, project);
+    // activeProjects[project.platform] = activeProjects[project.platform].filter(
+    //   ({ name, owner }) => name === project.name && owner === project.owner,
+    // );
+
+    let all_projects = activeProjects;
+    let index = all_projects[project.platform].findIndex(
+      (old_project: IProject) => old_project.name === project.name && old_project.owner === project.owner,
+    );
+    if (index !== -1) {
+      all_projects[project.platform][index] = project;
+      setActiveProjects(all_projects);
+      saveProject(project.platform, activeProjects[project.platform]);
+      return;
+    }
+
     switch (project.platform) {
       case "Github":
         return setActiveProjects({
@@ -80,6 +90,8 @@ const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
           Trello: [...activeProjects.Trello, project],
         });
     }
+
+    saveProject(project.platform, activeProjects[project.platform]);
   };
 
   return (

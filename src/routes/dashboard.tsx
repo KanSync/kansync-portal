@@ -68,26 +68,16 @@ const BoardImporter = () => {
 
   const { user } = useUser();
 
-  const handleClick = useCallback(async () => {
-    let projectExists = false;
-    activeProjects[currentPlatform].forEach((project: IProject) => {
-      if (receivedValue1 === project.owner && receivedValue2 === project.name) {
-        setErrorMessage("Project is already added");
-        projectExists = true;
-      }
-    });
-
-    if (projectExists) {
-      return;
-    }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleImport = async (
+    platform: string,
+    baseParams: BaseParams,
+    value1: string,
+    value2: string,
+  ): Promise<IUnifiedIssue[] | undefined> => {
     let result: IUnifiedIssue[] | undefined;
-    let baseParams: BaseParams = {
-      ...{ project_name: receivedValue1 + receivedValue2 },
-      ...(Object.keys(user).length === 0 ? {} : { user: user.nickname }),
-    };
 
-    switch (currentPlatform) {
+    switch (platform) {
       case "Jira":
         if (!jiraToken || jiraToken.expiresAt! < Date.now()) {
           await oauth(SCOPE.jira, STATE.jira, jira_client);
@@ -96,8 +86,8 @@ const BoardImporter = () => {
         result = await getIssues(
           BACKEND_JIRA_URL,
           Object.assign(baseParams, {
-            projectKey: receivedValue1,
-            name: receivedValue2,
+            projectKey: value1,
+            name: value2,
           }),
           jiraToken!,
         );
@@ -111,8 +101,8 @@ const BoardImporter = () => {
         result = await getIssues(
           BACKEND_GITHUB_URL,
           Object.assign(baseParams, {
-            repo: receivedValue1,
-            projectName: receivedValue2,
+            repo: value1,
+            projectName: value2,
           }),
           githubToken!,
         );
@@ -126,7 +116,7 @@ const BoardImporter = () => {
         result = await getIssues(
           BACKEND_TRELLO_URL,
           Object.assign(baseParams, {
-            boardId: receivedValue2,
+            boardId: value2,
           }),
           trelloToken!,
         );
@@ -135,6 +125,34 @@ const BoardImporter = () => {
       default:
         break;
     }
+
+    return result;
+  };
+
+  const handleClick = useCallback(async () => {
+    let projectExists = false;
+    activeProjects[currentPlatform].forEach((project: IProject) => {
+      if (receivedValue1 === project.owner && receivedValue2 === project.name) {
+        setErrorMessage("Project is already added");
+        projectExists = true;
+      }
+    });
+
+    if (projectExists) {
+      return;
+    }
+
+    let baseParams: BaseParams = {
+      ...{ project_name: receivedValue1 + receivedValue2 },
+      ...(Object.keys(user).length === 0 ? {} : { user: user.nickname }),
+    };
+
+    let result = await handleImport(
+      currentPlatform,
+      baseParams,
+      receivedValue1,
+      receivedValue2,
+    );
 
     if (result === undefined) {
       setErrorMessage("Project does not exist");
@@ -145,15 +163,13 @@ const BoardImporter = () => {
     adder(addProject, receivedValue1, receivedValue2, result);
   }, [
     activeProjects,
+    currentPlatform,
+    receivedValue1,
     receivedValue2,
+    user,
+    handleImport,
     adder,
     addProject,
-    receivedValue1,
-    currentPlatform,
-    jiraToken,
-    githubToken,
-    trelloToken,
-    user,
   ]);
 
   const handleChange = (post: IProject) => {
@@ -174,10 +190,26 @@ const BoardImporter = () => {
     return isChecked;
   };
 
-  const handleUpdate = (post: IProject) => {
-    const currentDate = new Date();
-    post.lastUpdate = currentDate;
-    //updata data with data from new request
+  const handleUpdate = async (post: IProject) => {
+    let baseParams: BaseParams = {
+      ...{ project_name: post.owner + post.name, update: "true" },
+      ...(Object.keys(user).length === 0 ? {} : { user: user.nickname }),
+    };
+
+    let result = await handleImport(
+      currentPlatform,
+      baseParams,
+      post.owner,
+      post.name,
+    );
+
+    if (result === undefined) {
+      setErrorMessage("Failed to update project");
+      return;
+    }
+
+    setErrorMessage("");
+    adder(addProject, post.owner, post.name, result);
   };
 
   const lastUpdateInDays = (post: IProject) => {
