@@ -23,6 +23,7 @@ export const options: ChartOptions = {
       beginAtZero: true,
     },
   },
+  maintainAspectRatio: false,
 };
 
 /**
@@ -40,9 +41,9 @@ function create_average_age_data(issues: IUnifiedIssue[]): ChartData {
   today.setHours(0, 0, 0, 0);
 
   for (const [key, value] of Object.entries(grouped_by_category)) {
-    let issues = value as IUnifiedIssue[]
+    let issues = value as IUnifiedIssue[];
     let ages = issues.map((c_date: IUnifiedIssue) =>
-      time_diff(c_date.createdAt, today)
+      time_diff(c_date.createdAt, today),
     );
     grouped_by_category[key] = sum(ages) / ages.length;
   }

@@ -31,6 +31,7 @@ export const options: ChartOptions = {
       beginAtZero: true,
     },
   },
+  maintainAspectRatio: false,
 };
 
 /**
@@ -61,7 +62,7 @@ function create_resolution_data(
     ({ statusChangeTime }: IUnifiedIssue) => {
       let date = structuredClone(statusChangeTime);
       date.setHours(0, 0, 0, 0);
-      return date;
+      return date.toLocaleDateString();
     },
   );
 
@@ -84,12 +85,12 @@ function create_resolution_data(
 
   // Calculate the average at every time step
   for (let date = start.getTime(); date <= stop.getTime(); date += DAY_IN_MS) {
-    let new_date = new Date(date);
+    let new_date = new Date(date).toLocaleDateString();
 
     // @ts-ignore
     let previous_avg = resolution_times.at(-1) || 0;
 
-    labels.push(new_date.toLocaleDateString());
+    labels.push(new_date);
 
     if (!grouped_by_doneDate[new_date]) {
       resolution_times.push(previous_avg);
