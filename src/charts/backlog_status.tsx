@@ -27,6 +27,7 @@ export const options: ChartOptions = {
       stacked: true,
     },
   },
+  maintainAspectRatio: false,
 };
 
 /**
@@ -38,7 +39,7 @@ export const options: ChartOptions = {
  */
 function create_backlog_status_data(
   issues: IUnifiedIssue[],
-  start: Date
+  start: Date,
 ): ChartData {
   let today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -51,16 +52,16 @@ function create_backlog_status_data(
     issues.map((issue: IUnifiedIssue) => {
       let date = issue.createdAt;
       date.setHours(0, 0, 0, 0);
-      return date;
-    })
+      return date.toLocaleDateString();
+    }),
   );
 
   let resolved = count(
     grouped_by_category[CATEGORY_DONE].map((issue: IUnifiedIssue) => {
       let date = issue.statusChangeTime;
       date.setHours(0, 0, 0, 0);
-      return date;
-    })
+      return date.toLocaleDateString();
+    }),
   );
 
   let labels = [];
@@ -69,8 +70,8 @@ function create_backlog_status_data(
 
   // For all dates in the range start to today
   for (let date = start.getTime(); date <= today.getTime(); date += DAY_IN_MS) {
-    let new_date = new Date(date);
-    labels.push(new_date.toLocaleDateString());
+    let new_date = new Date(date).toLocaleDateString();
+    labels.push(new_date);
 
     // @ts-ignore
     resolved_data.push(resolved[new_date] || 0);

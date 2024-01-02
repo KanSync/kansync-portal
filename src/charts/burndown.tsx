@@ -22,7 +22,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   Legend,
-  Tooltip
+  Tooltip,
 );
 
 export const options: ChartOptions = {
@@ -32,6 +32,7 @@ export const options: ChartOptions = {
       beginAtZero: true,
     },
   },
+  maintainAspectRatio: false,
 };
 
 /**
@@ -74,7 +75,7 @@ function create_actual(
   num_issues: number,
   start: Date,
   stop: Date,
-  doneDates: Date[]
+  doneDates: string[],
 ): ChartDataset {
   let count_done = count(doneDates);
 
@@ -84,7 +85,7 @@ function create_actual(
   // For all dates in the range start to stop
   for (let date = start.getTime(); date < stop.getTime(); date += DAY_IN_MS) {
     // @ts-ignore
-    acc_done += count_done[new Date(date)] || 0;
+    acc_done += count_done[new Date(date).toLocaleDateString()] || 0;
     result.push(num_issues - acc_done);
   }
 
@@ -112,18 +113,19 @@ function create_burndown_data(
   num_issues: number,
   start: Date,
   stop: Date,
-  issues: IUnifiedIssue[]
+  issues: IUnifiedIssue[],
 ): ChartData {
   stop.setHours(0, 0, 0, 0); // We do not care about hh:mm:ss
+  start.setHours(0, 0, 0, 0);
 
-  let done_dates: Date[] = [];
+  let done_dates: string[] = [];
 
   issues.forEach((issue) => {
     // Might not work with all agile tools
     if (issue.category === CATEGORY_DONE) {
       let done_date = issue.statusChangeTime;
       done_date.setHours(0, 0, 0, 0);
-      done_dates.push(done_date);
+      done_dates.push(done_date.toLocaleDateString());
     }
   });
 
@@ -152,7 +154,12 @@ const Burndown = (props: BurndownProps) => {
       ref={chartRef}
       type="bar"
       options={options}
-      data={create_burndown_data(props.numIssues, props.startDate, props.endDate, props.issues)}
+      data={create_burndown_data(
+        props.numIssues,
+        props.startDate,
+        props.endDate,
+        props.issues,
+      )}
       width={"100%"}
     />
   );

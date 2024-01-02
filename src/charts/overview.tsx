@@ -32,7 +32,7 @@ function create_overview_data(issues: IUnifiedIssue[]) {
   let grouped_by_category = Object.groupBy(issues, ({ category }) => category);
 
   for (const [key, value] of Object.entries(grouped_by_category)) {
-    let issues = value as IUnifiedIssue[]
+    let issues = value as IUnifiedIssue[];
     grouped_by_category[key] = issues.length;
   }
 
@@ -52,12 +52,8 @@ function create_overview_data(issues: IUnifiedIssue[]) {
   return data;
 }
 
-const Overview = (props: ChartProps) => {
-  return (
-    <Pie
-      data={create_overview_data(props.issues)}
-    />
-  );
+const OverviewGraph = (props: ChartProps) => {
+  return <Pie data={create_overview_data(props.issues)} />;
 };
 
-export default Overview;
+export default OverviewGraph;
