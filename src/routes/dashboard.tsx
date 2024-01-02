@@ -173,9 +173,11 @@ const BoardImporter = () => {
   ]);
 
   const handleChange = (post: IProject) => {
-    activeProjects[currentPlatform].forEach((project: IProject) => {
+    let updated_projects = activeProjects[currentPlatform];
+    updated_projects.forEach((project: IProject) => {
       if (post.name + post.owner === project.name + project.owner) {
         project.checked = !project.checked;
+        addProject(project);
       }
     });
   };
