@@ -13,7 +13,7 @@ const Box = (props: GraphProps) => {
       <div className="bg-secondary flex flex-col gap-4 flex-1">
         <p className="flex-1 self-center grow-0">{props.title}</p>
         <div className="flex-initial grow self-center w-full">
-          {props.graph}
+          {props.children}
         </div>
       </div>
     </>
@@ -38,50 +38,34 @@ const Overview = () => {
   return (
     <div className="gap-4 flex flex-col flex-1 justify-between">
       <div className="flex flex-row gap-4 flex-1">
-        <Box
-          title="Average Age"
-          issues={issues}
-          graph=<AverageAge issues={issues} />
-        />
-        <Box
-          title="Average Completion Time"
-          issues={issues}
-          graph=<Resolution
-            issues={issues}
-            startDate={old_date}
-            endDate={date}
-          />
-        />
-        <Box
-          title="Burndown"
-          issues={issues}
-          graph=<Burndown
+        <Box title="Average Age">
+          <AverageAge issues={issues} />
+        </Box>
+        <Box title="Average Completion Time">
+          <Resolution issues={issues} startDate={old_date} endDate={date} />
+        </Box>
+        <Box title="Burndown">
+          <Burndown
             numIssues={issues.length}
             startDate={old_date}
             endDate={date}
             issues={issues}
           />
-        />
+        </Box>
       </div>
       <div className="flex flex-row gap-4 flex-1">
-        <Box
-          title="Backlog Status"
-          issues={issues}
-          graph=<BacklogStatus issues={issues} startDate={old_date} />
-        />
-        <Box
-          title="Overview"
-          issues={issues}
-          graph=<OverviewGraph issues={issues} />
-        />
-        <Box
-          title="Issues Close To Due Date"
-          issues={issues}
-          graph=<CloseToDueDateChart
+        <Box title="Backlog Status">
+          <BacklogStatus issues={issues} startDate={old_date} />
+        </Box>
+        <Box title="Overview">
+          <OverviewGraph issues={issues} />
+          </Box>
+        <Box title="Issues Close To Due Date">
+          <CloseToDueDateChart
             issues={issues}
             daysThreshold={daysThreshold}
           />
-        />
+        </Box>
       </div>
     </div>
   );

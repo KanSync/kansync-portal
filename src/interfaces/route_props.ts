@@ -7,7 +7,6 @@ export interface CardProps {
 }
 
 export interface GraphProps {
-  issues: IUnifiedIssue[];
   title: string;
-  graph: ReactNode
+  children: ReactNode
 }
