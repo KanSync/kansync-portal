@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import 'chart.js/auto';
 import {
   Chart as ChartJS,
   LinearScale,
