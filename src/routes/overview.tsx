@@ -59,12 +59,9 @@ const Overview = () => {
         </Box>
         <Box title="Overview">
           <OverviewGraph issues={issues} />
-          </Box>
+        </Box>
         <Box title="Issues Close To Due Date">
-          <CloseToDueDateChart
-            issues={issues}
-            daysThreshold={daysThreshold}
-          />
+          <CloseToDueDateChart issues={issues} daysThreshold={daysThreshold} />
         </Box>
       </div>
     </div>
