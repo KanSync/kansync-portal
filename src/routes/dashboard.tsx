@@ -363,7 +363,6 @@ const Dashboard = () => {
             </JuicyButton>
           </Link>
         )}
-        {/* add trello component */}
         <BoardImporter />
       </div>
     </>

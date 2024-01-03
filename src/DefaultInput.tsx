@@ -24,13 +24,13 @@ const DefaultInput = ({ placeholder, id, onChildValueChange }: DefaultInputProps
         case "Github2":
             return "Enter repository"
         case "Trello1":
-          return "Enter board ID of repository" 
+          return "Enter board ID" 
         case "Trello2":
-          return "Enter owner of repository"
+          return "Optional: Choose name"
         case "Jira1":
-          return "Enter domain of repository" 
+          return "Enter domain name" 
         case "Jira2":
-          return "Enter project key of repository"
+          return "Enter project key"
         default:
           return "";
     }
