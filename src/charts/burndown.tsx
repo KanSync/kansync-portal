@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import 'chart.js/auto';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -76,7 +75,7 @@ function create_actual(
   num_issues: number,
   start: Date,
   stop: Date,
-  doneDates: string[],
+  doneDates: Date[],
 ): ChartDataset {
   let count_done = count(doneDates);
 
@@ -134,7 +133,7 @@ function create_burndown_data(
 
   let period = time_diff(start, stop);
 
-  let labels = [...Array(period).keys()];
+  let labels = [...Array(Math.round(period)).keys()];
 
   let data = {
     labels,
