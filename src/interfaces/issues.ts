@@ -8,7 +8,7 @@ export interface IUnifiedIssue {
   author: Assignee;
   body?: string;
   category: string;
-  statusChangeTime: Date;
+  statusChangeTime: Date | null;
   createdAt: Date;
   comments: string[];
   lastEditedAt: Date | null;
