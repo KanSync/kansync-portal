@@ -74,3 +74,19 @@ body {
 svg#plus-circle:hover {
   background-color: brown;
 }
+
+
+.react-datepicker-wrapper {
+  width: auto;
+}
+
+.react-datepicker__input-container {
+  width: auto;
+}
+
+.react-datepicker__input-container input {
+  border: 3px solid black;
+  padding: 3px;
+  border-radius: 8px;
+  width: 100px;
+}

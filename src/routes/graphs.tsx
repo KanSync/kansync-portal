@@ -33,6 +33,7 @@ const Graphs = () => {
   const [graph, setGraph] = useState<React.ReactElement>(<div>{null}</div>);
   const [startDate, setStartDate] = useState<Date>(today);
   const [endDate, setEndDate] = useState<Date>(today);
+  const [deadline, setDeadline] = useState<Date>(today);
 
   const onClick = (
     graph:
@@ -60,6 +61,34 @@ const Graphs = () => {
   return (
     <>
       <div className="bg-background flex-1 flex flex-col place-items-center justify-between gap-5">
+        <div className="flex flex-row justify-around gap-20">
+          <div className="flex flex-col">
+            <p className="flex-1 self-center text-sm">Start Date</p>
+            <DatePicker
+              className="flex-initial"
+              selected={startDate}
+              onChange={(date) => (date ? setStartDate(date) : null)}
+              maxDate={today}
+            />
+          </div>
+          <div className="flex flex-col">
+            <p className="flex-1 self-center text-sm">End Date</p>
+            <DatePicker
+              className="flex-initial"
+              selected={endDate}
+              onChange={(date) => (date ? setEndDate(date) : null)}
+            />
+          </div>
+          <div className="flex flex-col">
+            <p className="flex-1 self-center text-sm">Deadline</p>
+            <DatePicker
+              className="flex-initial"
+              selected={deadline}
+              onChange={(date) => (date ? setDeadline(date) : null)}
+              minDate={today}
+            />
+          </div>
+        </div>
         <div className="flex flex-row flex-wrap gap-3">
           <JuicyButton
             className="bg-text"
@@ -137,7 +166,7 @@ const Graphs = () => {
                 <Box title="Issues Close To Due Date">
                   <CloseToDueDateChart
                     issues={issues}
-                    daysThreshold={time_diff(today, endDate)}
+                    daysThreshold={time_diff(today, deadline)}
                   />
                 </Box>,
               );
@@ -145,34 +174,6 @@ const Graphs = () => {
           >
             Issues Close To Due Date
           </JuicyButton>
-        </div>
-        <div className="flex flex-row justify-around">
-          <div className="bg-black flex flex-col">
-            <p className="flex-1">Start Date</p>
-            <DatePicker
-              className="flex-initial w-1/3"
-              selected={today}
-              onChange={(date) => (date ? setStartDate(date) : null)}
-              maxDate={today}
-            />
-          </div>
-          <div className="bg-black flex flex-col">
-            <p className="flex-1">End Date</p>
-            <DatePicker
-              className="flex-initial w-1/3"
-              selected={today}
-              onChange={(date) => (date ? setEndDate(date) : null)}
-            />
-          </div>
-          <div className="bg-black flex flex-col">
-            <p className="flex-1">Deadline</p>
-            <DatePicker
-              className="flex-initial w-1/3"
-              selected={today}
-              onChange={(date) => (date ? setEndDate(date) : null)}
-              minDate={today}
-            />
-          </div>
         </div>
         <div className="bg-black w-3/4 h-full">{graph}</div>
       </div>
