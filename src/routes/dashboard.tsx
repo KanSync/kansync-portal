@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../header";
 import { IProject, useProject } from "../providers/ProjectProvider";
 import { useAuth } from "../providers/AuthProvider";
@@ -350,6 +350,18 @@ const BoardImporter = () => {
 const Dashboard = () => {
   const activeProjects = useProject().activeProjects;
 
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (
+      Object.values(activeProjects)
+        .flat()
+        .some((project) => project.checked)
+    ) {
+      navigate("/kanban/overview");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -357,13 +369,12 @@ const Dashboard = () => {
         {(activeProjects.Github.length > 0 ||
           activeProjects.Jira.length > 0 ||
           activeProjects.Trello.length > 0) && (
-          <Link to="/kanban/overview" className="flex place-content-center">
-            <JuicyButton className="bg-text px-8">
+          <div className="flex place-content-center">
+            <JuicyButton className="bg-text px-8" onClick={handleClick}>
               Continue with selected boards
             </JuicyButton>
-          </Link>
+          </div>
         )}
-        {/* add trello component */}
         <BoardImporter />
       </div>
     </>

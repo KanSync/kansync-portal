@@ -10,7 +10,7 @@ function toUnified(issue: any): IUnifiedIssue {
     statusChangeTime: new Date(issue.statusChangeTime),
     createdAt: new Date(issue.createdAt),
     comments: issue.comments,
-    lastEditedAt: new Date(issue.lastEditedAt),
+    lastEditedAt: issue.lastEditedAt ? new Date(issue.lastEditedAt) : null,
     dueDate: issue.dueDate ? new Date(issue.dueDate) : undefined,
     labels: issue.labels,
   };

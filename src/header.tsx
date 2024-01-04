@@ -72,7 +72,7 @@ const Header = () => {
       >
         <Link to={`/about`}>About</Link>
         <Link to={`/dashboard`}>Dashboard</Link>
-        <JuicyButton className="py-2 px-10 bg-accent" onClick={openModal}>
+        <JuicyButton className="py-2 px-10 bg-accent opacity-50 cursor-not-allowed" /*onClick={openModal}*/>
           Login
         </JuicyButton>
         <Transition appear show={isOpen} as={Fragment}>

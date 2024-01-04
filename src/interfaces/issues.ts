@@ -11,7 +11,7 @@ export interface IUnifiedIssue {
   statusChangeTime: Date;
   createdAt: Date;
   comments: string[];
-  lastEditedAt: Date;
+  lastEditedAt: Date | null;
   dueDate?: Date;
   labels: string[];
   dependencies?: IUnifiedIssue[];
