@@ -11,7 +11,7 @@ export const DAY_IN_MS = 1000 * 60 * 60 * 24;
  * @returns The number of days between the two dates.
  */
 export function time_diff(old: Date, recent: Date) {
-  return Math.round((recent.getTime() - old.getTime()) / DAY_IN_MS);
+  return Math.abs(Math.round((recent.getTime() - old.getTime()) / DAY_IN_MS));
 }
 
 export function sum(numList: number[]) {

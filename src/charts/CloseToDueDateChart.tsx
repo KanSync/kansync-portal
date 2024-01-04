@@ -13,6 +13,7 @@ import {
 import { Chart } from "react-chartjs-2";
 import { IUnifiedIssue } from "../interfaces/issues";
 import { CloseToDueDateChartProps } from "../interfaces/chart_props";
+import { time_diff } from "./common";
 
 ChartJS.register(CategoryScale, BarElement, LinearScale, Legend, Tooltip);
 
@@ -34,9 +35,7 @@ export function showIssuesWithinDaysThreshold(
 
   const filteredIssues = issues.filter((issue) => {
     if (issue.dueDate) {
-      const timeDifference = issue.dueDate.getTime() - currentDate.getTime();
-      const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-
+      const daysDifference = time_diff(currentDate, issue.dueDate);
       return daysDifference <= daysThreshold;
     }
     return false;
