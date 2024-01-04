@@ -41,9 +41,9 @@ export const options: ChartOptions = {
 function create_backlog_status_data(
   issues: IUnifiedIssue[],
   start: Date,
+  end: Date,
 ): ChartData {
-  let today = new Date();
-  today.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
   start.setHours(0, 0, 0, 0);
 
   // @ts-ignore
@@ -70,7 +70,7 @@ function create_backlog_status_data(
   let created_data = [];
 
   // For all dates in the range start to today
-  for (let date = start.getTime(); date <= today.getTime(); date += DAY_IN_MS) {
+  for (let date = start.getTime(); date <= end.getTime(); date += DAY_IN_MS) {
     let new_date = new Date(date).toLocaleDateString();
     labels.push(new_date);
 
@@ -115,7 +115,7 @@ const BacklogStatus = (props: BacklogStatusProps) => {
       ref={chartRef}
       type="bar"
       options={options}
-      data={create_backlog_status_data(props.issues, props.startDate)}
+      data={create_backlog_status_data(props.issues, props.startDate, props.endDate)}
       width={"100%"}
     />
   );

@@ -17,6 +17,7 @@ export interface ResolutionProps extends ChartProps {
 
 export interface BacklogStatusProps extends ChartProps {
   startDate: Date;
+  endDate: Date;
 }
 
 export interface CloseToDueDateChartProps extends ChartProps {

@@ -29,7 +29,7 @@ const Overview = () => {
   let issues = projects.map((project) => project.issues).flat();
 
   // TODO: Let user pick
-  let date = new Date();
+  let today = new Date();
   let old_date = new Date();
   old_date.setMonth(old_date.getMonth() - 2);
 
@@ -42,20 +42,20 @@ const Overview = () => {
           <AverageAge issues={issues} />
         </Box>
         <Box title="Average Completion Time">
-          <Resolution issues={issues} startDate={old_date} endDate={date} />
+          <Resolution issues={issues} startDate={old_date} endDate={today} />
         </Box>
         <Box title="Burndown">
           <Burndown
             numIssues={issues.length}
             startDate={old_date}
-            endDate={date}
+            endDate={today}
             issues={issues}
           />
         </Box>
       </div>
       <div className="flex flex-row gap-4 flex-1">
         <Box title="Backlog Status">
-          <BacklogStatus issues={issues} startDate={old_date} />
+          <BacklogStatus issues={issues} startDate={old_date} endDate={today}/>
         </Box>
         <Box title="Overview">
           <OverviewGraph issues={issues} />

@@ -140,7 +140,7 @@ const Graphs = () => {
             onClick={() => {
               onClick(
                 <Box title="Backlog Status">
-                  <BacklogStatus issues={issues} startDate={startDate} />
+                  <BacklogStatus issues={issues} startDate={startDate} endDate={endDate} />
                 </Box>,
               );
             }}
