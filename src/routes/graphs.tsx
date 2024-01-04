@@ -110,7 +110,7 @@ const Graphs = () => {
                   <Resolution
                     issues={issues}
                     startDate={startDate}
-                    endDate={today}
+                    endDate={endDate}
                   />
                 </Box>,
               );
