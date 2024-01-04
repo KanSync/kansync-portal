@@ -40,7 +40,7 @@ function create_overview_data(issues: IUnifiedIssue[]) {
   let labels = Object.keys(grouped_by_category);
 
   let overview_dataset = {
-    label: "Average Age",
+    label: "Amount",
     data: Object.values(grouped_by_category),
   };
 
