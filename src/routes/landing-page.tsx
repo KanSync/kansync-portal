@@ -12,7 +12,7 @@ const WalkthroughTextBoxes = ({
 }) => {
   return (
     <div className="rounded-xl mx-auto mt-10 bg-gradient-to-r p-[6px] from-primary via-primary to-accent">
-      <div className="flex flex-col h-full justify-between bg-background rounded-lg p-4 flex-1">
+      <div className="flex flex-col h-full bg-background rounded-lg p-4 flex-1">
         <b className="bg-gradient-to-r from-accent to-primary text-transparent bg-clip-text text-2xl">
           {title}
         </b>
@@ -94,7 +94,7 @@ const LandingPage = () => (
         <div className="flex flex-col flex-1 gap-4 2xl:w-1/2">
           <div className="flex justify-around gap-8">
             <WalkthroughTextBoxes title="1">
-              <p>
+              <p className="w-40">
                 Start by pressing the{" "}
                 <span className=" bg-text text-secondary px-1 py-0.5 rounded-sm">
                   Import
@@ -116,8 +116,8 @@ const LandingPage = () => (
             <WalkthroughTextBoxes title="2">
               <p>
                 Choose your favorite projects to import. We allow importing from
-                Jira, Trello and Github. Private projects/repositories require
-                authentication. After entering the name of the project, click
+                Jira, Trello and Github. All imports require
+                authentication. After entering board information, click
                 the plus button to mark a project as selected. Click on the
                 button "Continue with selected boards" in order to proceed to
                 the next step.
@@ -128,23 +128,17 @@ const LandingPage = () => (
             <WalkthroughTextBoxes title="3">
               <p>
                 Tabs on the left are used for navigation.{" "}
-                <strong>Overview</strong> is the page you see directly after
-                login. There are six different types of charts are presented
+                <strong>Overview</strong> is the first page you see. There are six different types of charts are presented
                 that show average age, average completion time, burndown,
                 backlog status, overview of the issues in different stages of
-                development, and issues that are close to due date{" "}
+                development, and issues that are close to due date.{" "}
                 <strong>Kanban Board</strong> is the page where you can see all
-                your issues in a unified view. Current you can filter issues by
-                name.
+                of your issues/tasks in a unified view.
               </p>
             </WalkthroughTextBoxes>
             <WalkthroughTextBoxes title="4">
               <strong>Generate Graphs</strong> is the page where you can
-              generate different types of graphs. You can choose to generate an
-              image out of the data presented in <strong>Overview</strong> and{" "}
-              <strong>Kanban Board</strong>
-              pages. You can also choose to generate a burndown chart for a
-              specific project.
+              generate different types of graphs. This can be done by selecting valid start and end dates for the graphs. Optionally you can also pick a deadline which is for showing all tasks that must be completed before that date.
             </WalkthroughTextBoxes>
           </div>
         </div>
