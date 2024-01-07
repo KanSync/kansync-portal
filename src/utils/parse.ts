@@ -7,7 +7,7 @@ function toUnified(issue: any): IUnifiedIssue {
     author: issue.author,
     body: issue.body,
     category: issue.category,
-    statusChangeTime: issue.statusChangeTime ? new Date(issue.statusChangeTime) : null,
+    statusChangeTime: new Date(issue.statusChangeTime),
     createdAt: new Date(issue.createdAt),
     comments: issue.comments,
     lastEditedAt: issue.lastEditedAt ? new Date(issue.lastEditedAt) : null,
